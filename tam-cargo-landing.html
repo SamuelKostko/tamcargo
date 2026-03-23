@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TAM Cargo — Logística Internacional</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0f172a;--navy-mid:#1a2744;--navy-card:#1e2d4a;
+  --electric:#2563eb;--electric-d:#1d4ed8;
+  --cyan:#38bdf8;--cyan-l:#7dd3fc;
+  --white:#f8fafc;--gray:#94a3b8;--gray-l:#cbd5e1;
+  --font:'Plus Jakarta Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--white);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--electric);border-radius:2px}
+a{text-decoration:none;color:inherit}
+
+/* ── UTILITY ── */
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(37,99,235,.12);border:1px solid rgba(56,189,248,.28);border-radius:99px;padding:5px 14px;font-size:.72rem;color:var(--cyan);font-family:var(--mono);letter-spacing:.09em;text-transform:uppercase}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,.35)}50%{box-shadow:0 0 0 14px rgba(56,189,248,0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* ── NAVBAR ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:9000;padding:0 24px;height:66px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+#nav.scrolled{background:rgba(15,23,42,.96);backdrop-filter:blur(18px);border-bottom-color:rgba(37,99,235,.18)}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:800;letter-spacing:-.02em}
+.logo-icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#38bdf8);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:18px;height:18px}
+.logo-accent{color:var(--cyan)}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-link{font-size:.85rem;font-weight:500;color:var(--gray-l);position:relative;transition:color .2s}
+.nav-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:var(--cyan);transition:width .25s}
+.nav-link:hover{color:var(--white)}
+.nav-link:hover::after{width:100%}
+.btn-track{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:linear-gradient(135deg,#2563eb,#38bdf8);border:none;border-radius:9px;color:#fff;font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .2s;letter-spacing:-.01em}
+.btn-track:hover{opacity:.88;transform:translateY(-1px)}
+.hamburger{display:none;background:none;border:none;color:var(--white);cursor:pointer;padding:4px}
+
+/* ── MOBILE DRAWER ── */
+#drawer{position:fixed;top:0;right:0;width:270px;height:100vh;background:var(--navy-mid);border-left:1px solid rgba(37,99,235,.22);z-index:9500;transform:translateX(110%);transition:transform .35s cubic-bezier(.4,0,.2,1);padding:74px 28px 28px;display:flex;flex-direction:column;gap:4px}
+#drawer.open{transform:translateX(0)}
+.drawer-link{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.95rem;color:var(--gray-l);font-weight:500;transition:color .2s}
+.drawer-link:hover{color:var(--white)}
+.close-btn{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--gray);cursor:pointer}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9400;display:none}
+#overlay.open{display:block}
+
+/* ── HERO ── */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1800&auto=format&fit=crop&q=75') center/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,23,42,.97) 0%,rgba(15,23,42,.78) 55%,rgba(15,23,42,.93) 100%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.05) 1px,transparent 1px);background-size:56px 56px}
+.hero-blob1{position:absolute;top:15%;left:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(37,99,235,.14) 0%,transparent 65%);border-radius:50%;pointer-events:none}
+.hero-blob2{position:absolute;bottom:5%;right:-5%;width:420px;height:420px;background:radial-gradient(circle,rgba(56,189,248,.1) 0%,transparent 65%);border-radius:50%;pointer-events:none}
+.hero-content{position:relative;z-index:2;padding:120px 24px 80px;max-width:1180px;margin:0 auto;width:100%}
+.hero-kicker{animation:fadeUp .7s ease both}
+.hero-title{font-size:clamp(2.3rem,5vw,4rem);font-weight:800;letter-spacing:-.04em;line-height:1.06;max-width:720px;margin:26px 0 22px;animation:fadeUp .7s .1s ease both}
+.hero-title .gradient-text{background:linear-gradient(90deg,#2563eb,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:clamp(.92rem,1.8vw,1.1rem);color:var(--gray-l);max-width:520px;line-height:1.72;margin-bottom:36px;animation:fadeUp .7s .2s ease both}
+.hero-sub strong{color:var(--white)}
+.search-bar{display:flex;align-items:center;max-width:540px;background:rgba(255,255,255,.07);border:1.5px solid rgba(56,189,248,.28);border-radius:11px;overflow:hidden;margin-bottom:34px;backdrop-filter:blur(10px);animation:fadeUp .7s .3s ease both;transition:border-color .25s}
+.search-bar:focus-within{border-color:rgba(56,189,248,.55)}
+.search-bar input{flex:1;background:transparent;border:none;outline:none;color:var(--white);font-family:var(--font);font-size:.9rem;padding:14px 10px 14px 16px}
+.search-bar input::placeholder{color:var(--gray)}
+.search-icon{margin-left:16px;flex-shrink:0;color:var(--gray)}
+.search-btn{padding:0 22px;background:linear-gradient(135deg,#2563eb,#38bdf8);color:#fff;border:none;font-family:var(--font);font-size:.85rem;font-weight:700;cursor:pointer;height:100%;display:flex;align-items:center;gap:6px;transition:opacity .2s;white-space:nowrap;align-self:stretch}
+.search-btn:hover{opacity:.88}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp .7s .4s ease both}
+.btn-primary{display:inline-flex;align-items:center;gap:7px;padding:13px 26px;background:linear-gradient(135deg,#2563eb,#38bdf8);color:#fff;border:none;border-radius:9px;font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .2s;letter-spacing:-.01em}
+.btn-primary:hover{opacity:.88;transform:translateY(-2px)}
+.btn-outline{display:inline-flex;align-items:center;gap:7px;padding:13px 26px;background:transparent;color:var(--cyan);border:1.5px solid var(--cyan);border-radius:9px;font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s,transform .2s;letter-spacing:-.01em}
+.btn-outline:hover{background:rgba(56,189,248,.1);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:36px;margin-top:52px;flex-wrap:wrap;animation:fadeUp .7s .5s ease both}
+.hero-stat-val{font-size:1.7rem;font-weight:800;color:var(--cyan);letter-spacing:-.04em;line-height:1}
+.hero-stat-lbl{font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+
+/* ── STRIPE LINE ── */
+.stripe{height:1px;background:linear-gradient(90deg,transparent,var(--electric),var(--cyan),transparent);border:none;max-width:780px;margin:0 auto}
+
+/* ── SERVICES ── */
+#servicios{padding:96px 24px}
+.section-header{text-align:center;margin-bottom:60px}
+.section-title{font-size:clamp(1.7rem,3.2vw,2.6rem);font-weight:800;letter-spacing:-.035em;margin-bottom:14px}
+.section-title .hl{color:var(--cyan)}
+.section-sub{color:var(--gray);max-width:500px;margin:0 auto;line-height:1.68}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;max-width:1180px;margin:0 auto}
+.svc-card{background:var(--navy-card);border:1px solid rgba(37,99,235,.2);border-radius:var(--r);padding:30px 26px;position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;cursor:default}
+.svc-card:hover{transform:translateY(-6px);border-color:rgba(56,189,248,.35);box-shadow:0 20px 48px rgba(37,99,235,.18)}
+.svc-icon{width:50px;height:50px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.svc-icon svg{width:22px;height:22px}
+.svc-title{font-size:1rem;font-weight:700;margin-bottom:9px}
+.svc-desc{font-size:.83rem;color:var(--gray);line-height:1.65;margin-bottom:18px}
+.svc-features{list-style:none;display:flex;flex-direction:column;gap:7px}
+.svc-feat{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--gray-l)}
+.svc-feat svg{width:12px;height:12px;flex-shrink:0}
+.svc-glow{position:absolute;bottom:-40px;right:-40px;width:120px;height:120px;border-radius:50%;pointer-events:none}
+
+/* ── STATS BAND ── */
+#confianza{padding:80px 24px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;max-width:1180px;margin:0 auto 80px}
+.stat-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:26px 20px;text-align:center;transition:background .3s}
+.stat-box:hover{background:rgba(37,99,235,.1)}
+.stat-box svg{margin-bottom:10px}
+.stat-val{font-size:1.85rem;font-weight:800;color:var(--white);letter-spacing:-.04em;line-height:1}
+.stat-lbl{font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-top:5px}
+
+/* ── WHY SECTION ── */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;max-width:1180px;margin:0 auto}
+.why-reasons{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.reason-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:22px 18px;transition:border-color .3s,background .3s;cursor:default}
+.reason-card:hover{border-color:rgba(56,189,248,.3);background:rgba(37,99,235,.07)}
+.reason-card svg{margin-bottom:10px;width:18px;height:18px}
+.reason-title{font-size:.86rem;font-weight:700;margin-bottom:7px}
+.reason-desc{font-size:.77rem;color:var(--gray);line-height:1.6}
+
+/* ── MISSION ── */
+#nosotros{padding:80px 24px}
+.mission-box{background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.18);border-radius:18px;padding:40px 44px;max-width:860px;margin:0 auto;text-align:center}
+.mission-quote{font-size:1.02rem;line-height:1.8;color:var(--gray-l);margin-bottom:28px;font-style:italic}
+.mission-pills{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.mission-pill{text-align:center}
+.pill-label{font-size:.68rem;color:var(--cyan);font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
+.pill-val{font-size:.85rem;color:var(--gray-l)}
+
+/* ── CTA BAND ── */
+#contacto{padding:72px 24px}
+.cta-band{background:linear-gradient(135deg,rgba(37,99,235,.18) 0%,rgba(56,189,248,.08) 100%);border:1px solid rgba(37,99,235,.28);border-radius:20px;padding:60px 48px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center;max-width:1180px;margin:0 auto}
+.cta-title{font-size:clamp(1.4rem,2.8vw,2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.cta-sub{color:var(--gray);line-height:1.65;max-width:460px;margin-bottom:20px}
+.cta-contacts{display:flex;gap:20px;flex-wrap:wrap}
+.cta-contact{display:flex;align-items:center;gap:7px;color:var(--gray-l);font-size:.85rem}
+.cta-contact svg{width:14px;height:14px;color:var(--cyan)}
+.cta-btns{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+
+/* ── FOOTER ── */
+footer{background:var(--navy-mid);border-top:1px solid rgba(37,99,235,.15);padding:60px 24px 22px}
+.footer-inner{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px;max-width:1180px;margin:0 auto;margin-bottom:44px}
+.footer-brand p{color:var(--gray);font-size:.83rem;line-height:1.7;max-width:240px;margin:14px 0 18px}
+.social-row{display:flex;gap:8px}
+.social-btn{width:33px;height:33px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--gray);transition:border-color .2s,color .2s;cursor:pointer}
+.social-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.social-btn svg{width:13px;height:13px}
+.footer-col h4{font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--white);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-col a{font-size:.82rem;color:var(--gray);transition:color .2s}
+.footer-col a:hover{color:var(--cyan-l)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-top:1px solid rgba(255,255,255,.07);padding-top:20px;max-width:1180px;margin:0 auto}
+.footer-bottom span{font-size:.78rem;color:var(--gray)}
+.footer-tag{font-size:.72rem;color:var(--gray);font-family:var(--mono);display:flex;align-items:center;gap:5px}
+
+/* ── MODAL ── */
+#modal{position:fixed;inset:0;background:rgba(8,12,25,.85);backdrop-filter:blur(10px);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px}
+#modal.open{display:flex}
+.modal-card{background:var(--navy-card);border:1px solid rgba(37,99,235,.3);border-radius:18px;padding:48px 40px;max-width:460px;width:100%;text-align:center;position:relative;animation:fadeUp .35s ease}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--gray);cursor:pointer;transition:color .2s}
+.modal-close:hover{color:var(--white)}
+.modal-icon{width:62px;height:62px;border-radius:14px;background:linear-gradient(135deg,rgba(37,99,235,.2),rgba(56,189,248,.15));border:1.5px solid rgba(56,189,248,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 22px}
+.modal-icon svg{width:26px;height:26px;color:var(--cyan)}
+.modal-title{font-size:1.3rem;font-weight:800;letter-spacing:-.03em;margin-bottom:12px;line-height:1.3}
+.modal-text{color:var(--gray);font-size:.88rem;line-height:1.68;margin-bottom:24px}
+.modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-wa{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;border:none;border-radius:9px;font-family:var(--font);font-size:.85rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.btn-wa:hover{opacity:.88}
+
+/* ── WHATSAPP FAB ── */
+#wa-fab{position:fixed;bottom:26px;right:26px;width:54px;height:54px;background:linear-gradient(135deg,#25d366,#128c7e);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:8800;box-shadow:0 6px 22px rgba(37,211,102,.35);cursor:pointer;animation:pulse 3s infinite;transition:transform .3s;text-decoration:none}
+#wa-fab:hover{transform:scale(1.12)}
+#wa-fab svg{width:26px;height:26px;color:#fff}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .why-grid{grid-template-columns:1fr}
+  .cta-band{grid-template-columns:1fr}.cta-btns{flex-direction:row}
+  .footer-inner{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .nav-links,.btn-track{display:none}
+  .hamburger{display:block}
+  .hero-stats{gap:22px}
+  .why-reasons{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+  .cta-band{padding:36px 24px}
+  .mission-box{padding:28px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav id="nav">
+  <a href="#" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18l3-10h14l3 10"/><path d="M5 18v2"/><path d="M19 18v2"/><path d="M5 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path d="M2 18h20"/></svg>
+    </div>
+    TAM<span class="logo-accent">Cargo</span>
+  </a>
+  <div class="nav-links">
+    <a href="#servicios" class="nav-link">Servicios</a>
+    <a href="#confianza" class="nav-link">¿Por qué TAM?</a>
+    <a href="#nosotros" class="nav-link">Nosotros</a>
+    <a href="#contacto" class="nav-link">Contacto</a>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button class="btn-track" onclick="openModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      Rastrear Carga
+    </button>
+    <button class="hamburger" onclick="openDrawer()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ── MOBILE DRAWER ── -->
+<div id="overlay" onclick="closeDrawer()"></div>
+<div id="drawer">
+  <button class="close-btn" onclick="closeDrawer()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <a href="#servicios" class="drawer-link" onclick="closeDrawer()">Servicios <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></a>
+  <a href="#confianza" class="drawer-link" onclick="closeDrawer()">¿Por qué TAM? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></a>
+  <a href="#nosotros" class="drawer-link" onclick="closeDrawer()">Nosotros <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></a>
+  <a href="#contacto" class="drawer-link" onclick="closeDrawer()">Contacto <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></a>
+  <button class="btn-primary" style="margin-top:20px;justify-content:center;border:none" onclick="openModal();closeDrawer()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    Rastrear Carga
+  </button>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">
+      <span class="badge">
+        <span class="badge-dot"></span>
+        Logística Internacional · USA → Venezuela y el Mundo
+      </span>
+    </div>
+    <h1 class="hero-title">
+      Tu Carga.<br>
+      <span class="gradient-text">Nuestra Misión.</span><br>
+      Un Solo Destino.
+    </h1>
+    <p class="hero-sub">
+      Soluciones integrales de transporte <strong>Marítimo, Aéreo y Terrestre</strong> con gestión aduanera completa. Especialistas en envíos a Venezuela e Internacional.
+    </p>
+    <div class="search-bar">
+      <svg class="search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="tracking-input" placeholder="Ingresa tu número de seguimiento..." />
+      <button class="search-btn" onclick="openModal()">
+        Rastrear
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="hero-ctas">
+      <a href="#servicios" class="btn-primary" style="border:none">
+        Ver Servicios
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </a>
+      <a href="#contacto" class="btn-outline">Cotizar Envío</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-val">15+</div><div class="hero-stat-lbl">Años de experiencia</div></div>
+      <div><div class="hero-stat-val">50+</div><div class="hero-stat-lbl">Destinos activos</div></div>
+      <div><div class="hero-stat-val">99%</div><div class="hero-stat-lbl">Entregas a tiempo</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section id="servicios" style="padding:96px 0">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="badge" style="margin-bottom:18px">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Nuestros Servicios
+      </span>
+      <h2 class="section-title">Soluciones Logísticas <span class="hl">360°</span></h2>
+      <p class="section-sub">De la recolección al destino final, cubrimos cada eslabón de la cadena con estándares internacionales.</p>
+    </div>
+    <div class="services-grid">
+
+      <!-- Marítima -->
+      <div class="svc-card fade-up d1">
+        <div class="svc-icon" style="background:rgba(37,99,235,.15);border:1.5px solid rgba(37,99,235,.3)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18l3-10h14l3 10"/><path d="M5 18v2"/><path d="M19 18v2"/><path d="M5 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path d="M2 18h20"/></svg>
+        </div>
+        <div class="svc-title">Carga Marítima</div>
+        <div class="svc-desc">Transporte de contenedores FCL y LCL (consolidados). Salidas semanales hacia puertos venezolanos e internacionales con seguimiento completo.</div>
+        <ul class="svc-features">
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Contenedores FCL / LCL</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Consolidados semanales</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Puerta a Puerta</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Permisos de exportación</li>
+        </ul>
+        <div class="svc-glow" style="background:radial-gradient(circle,rgba(37,99,235,.12) 0%,transparent 70%)"></div>
+      </div>
+
+      <!-- Aérea -->
+      <div class="svc-card fade-up d2">
+        <div class="svc-icon" style="background:rgba(56,189,248,.12);border:1.5px solid rgba(56,189,248,.28)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16l-4-8-4 4-4-4-4 8"/><path d="M3 20h18"/></svg>
+        </div>
+        <div class="svc-title">Carga Aérea</div>
+        <div class="svc-desc">Envíos urgentes por vía aérea con tiempos de entrega de 5 a 6 días. Ideal para mercancías de alto valor o carácter urgente.</div>
+        <ul class="svc-features">
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Entrega en 5-6 días</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Carga general y especial</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Temperatura controlada</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Documentación express</li>
+        </ul>
+        <div class="svc-glow" style="background:radial-gradient(circle,rgba(56,189,248,.1) 0%,transparent 70%)"></div>
+      </div>
+
+      <!-- Terrestre -->
+      <div class="svc-card fade-up d3">
+        <div class="svc-icon" style="background:rgba(124,58,237,.14);border:1.5px solid rgba(124,58,237,.28)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div class="svc-title">Transporte Terrestre</div>
+        <div class="svc-desc">Distribución local y nacional con flota especializada. Cobertura en Caracas, Maracaibo, Valencia, Barcelona y más ciudades de Venezuela.</div>
+        <ul class="svc-features">
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Cobertura nacional</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Flota propia y aliados</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Entregas programadas</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Seguimiento en ruta</li>
+        </ul>
+        <div class="svc-glow" style="background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 70%)"></div>
+      </div>
+
+      <!-- Aduanas -->
+      <div class="svc-card fade-up d4">
+        <div class="svc-icon" style="background:rgba(8,145,178,.14);border:1.5px solid rgba(8,145,178,.28)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="svc-title">Gestión Aduanera</div>
+        <div class="svc-desc">Gestión integral de trámites de importación y exportación. Despachantes certificados garantizan el cumplimiento normativo en cada operación.</div>
+        <ul class="svc-features">
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Import / Export</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Permisos y licencias</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Clasificación arancelaria</li>
+          <li class="svc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Asesoría permanente</li>
+        </ul>
+        <div class="svc-glow" style="background:radial-gradient(circle,rgba(8,145,178,.1) 0%,transparent 70%)"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── STRIPE ── -->
+<hr class="stripe">
+
+<!-- ── CONFIANZA ── -->
+<section id="confianza" style="padding:80px 0">
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-box fade-up d1">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin:0 auto 10px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div class="stat-val">50+</div><div class="stat-lbl">Destinos Internacionales</div>
+      </div>
+      <div class="stat-box fade-up d2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin:0 auto 10px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <div class="stat-val">10K+</div><div class="stat-lbl">Envíos Completados</div>
+      </div>
+      <div class="stat-box fade-up d3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin:0 auto 10px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="stat-val">99%</div><div class="stat-lbl">Puntualidad Garantizada</div>
+      </div>
+      <div class="stat-box fade-up d4">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin:0 auto 10px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="stat-val">4.9</div><div class="stat-lbl">Satisfacción del Cliente</div>
+      </div>
+    </div>
+
+    <!-- Why TAM grid -->
+    <div class="why-grid">
+      <div class="fade-up">
+        <span class="badge" style="margin-bottom:18px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ¿Por qué TAM Cargo?
+        </span>
+        <h2 style="font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;letter-spacing:-.035em;margin-bottom:16px;line-height:1.2">
+          La solución integral para envíos a <span style="color:var(--cyan)">Venezuela</span> e Internacional
+        </h2>
+        <p style="color:var(--gray);line-height:1.75;margin-bottom:16px;font-size:.92rem">
+          En TAM Cargo nos dedicamos al transporte marítimo y aéreo, así como a soluciones logísticas integrales: aduanas, almacenaje y transporte terrestre. Somos el puente confiable entre tus negocios y Venezuela.
+        </p>
+        <p style="color:var(--gray);line-height:1.75;font-size:.92rem;margin-bottom:28px">
+          Con presencia en Estados Unidos y Venezuela, ofrecemos cobertura completa con personal especializado en cada nodo de la cadena de suministro.
+        </p>
+        <a href="#contacto" class="btn-primary" style="border:none">
+          Hablar con un Asesor
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="why-reasons fade-up d2">
+        <div class="reason-card">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin-bottom:10px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="reason-title">Seguridad y Confianza</div>
+          <div class="reason-desc">Seguros de carga completos y rastreo en cada etapa del proceso logístico.</div>
+        </div>
+        <div class="reason-card">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin-bottom:10px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <div class="reason-title">Velocidad Operativa</div>
+          <div class="reason-desc">Procesos optimizados para minimizar tiempos en aduanas y puertos.</div>
+        </div>
+        <div class="reason-card">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin-bottom:10px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <div class="reason-title">Visibilidad Total</div>
+          <div class="reason-desc">Reportes y actualizaciones sobre el estado de tu mercancía en tiempo real.</div>
+        </div>
+        <div class="reason-card">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" style="display:block;margin-bottom:10px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div class="reason-title">Expertos en Venezuela</div>
+          <div class="reason-desc">Décadas de experiencia en rutas USA–Venezuela con gestión completa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── NOSOTROS ── -->
+<section id="nosotros" style="padding:72px 0">
+  <div class="container">
+    <div class="mission-box fade-up" style="max-width:820px">
+      <span class="badge" style="margin-bottom:22px">
+        <span class="badge-dot"></span>
+        Nuestra Misión
+      </span>
+      <p class="mission-quote">
+        "Brindar soluciones logísticas integrales de transporte marítimo, aéreo y terrestre con los más altos estándares de calidad, seguridad y puntualidad — conectando a nuestros clientes con el mundo y facilitando el comercio internacional hacia Venezuela y destinos globales."
+      </p>
+      <div class="mission-pills">
+        <div class="mission-pill">
+          <div class="pill-label">Misión</div>
+          <div class="pill-val">Logística confiable y puntual</div>
+        </div>
+        <div class="mission-pill" style="border-left:1px solid rgba(255,255,255,.1);padding-left:20px">
+          <div class="pill-label">Visión</div>
+          <div class="pill-val">Líder regional en carga internacional</div>
+        </div>
+        <div class="mission-pill" style="border-left:1px solid rgba(255,255,255,.1);padding-left:20px">
+          <div class="pill-label">Valores</div>
+          <div class="pill-val">Transparencia · Compromiso · Excelencia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACTO CTA ── -->
+<section id="contacto" style="padding:64px 0 80px">
+  <div class="container">
+    <div class="cta-band fade-up">
+      <div>
+        <div class="cta-title">¿Listo para enviar tu carga?</div>
+        <div class="cta-sub">Contáctanos hoy y recibe una cotización personalizada en menos de 24 horas. Nuestro equipo de expertos está listo para asesorarte.</div>
+        <div class="cta-contacts">
+          <div class="cta-contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.3a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.5 17.5z"/></svg>
+            +1 (XXX) XXX-XXXX
+          </div>
+          <div class="cta-contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            info@tam-cargo.com
+          </div>
+        </div>
+      </div>
+      <div class="cta-btns">
+        <a href="https://wa.me/+1234567890" class="btn-wa" style="text-decoration:none">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          WhatsApp
+        </a>
+        <a href="mailto:info@tam-cargo.com" class="btn-outline" style="font-family:var(--font);font-size:.85rem;font-weight:700;cursor:pointer;justify-content:center;display:inline-flex;align-items:center;gap:6px">
+          Enviar Email
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18l3-10h14l3 10"/><path d="M5 18v2"/><path d="M19 18v2"/><path d="M5 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path d="M2 18h20"/></svg>
+        </div>
+        TAM<span class="logo-accent">Cargo</span>
+      </div>
+      <p>Transporte marítimo, aéreo y soluciones logísticas integrales. Tu socio confiable en comercio internacional.</p>
+      <div class="social-row">
+        <div class="social-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></div>
+        <div class="social-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></div>
+        <div class="social-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Servicios</h4>
+      <ul>
+        <li><a href="#servicios">Carga Marítima</a></li>
+        <li><a href="#servicios">Carga Aérea</a></li>
+        <li><a href="#servicios">Transporte Terrestre</a></li>
+        <li><a href="#servicios">Gestión Aduanera</a></li>
+        <li><a href="#servicios">Almacenaje</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Compañía</h4>
+      <ul>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#nosotros">Misión y Visión</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+        <li><a href="#">Blog Logístico</a></li>
+        <li><a href="#">Trabaja con Nosotros</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Términos de Servicio</a></li>
+        <li><a href="#">Política de Privacidad</a></li>
+        <li><a href="#">Seguros de Carga</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 TAM Cargo. Todos los derechos reservados.</span>
+    <div class="footer-tag">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+      Logistics-Tech 2026
+    </div>
+  </div>
+</footer>
+
+<!-- ── WHATSAPP FAB ── -->
+<a id="wa-fab" href="https://wa.me/+1234567890?text=Hola%2C%20me%20interesa%20cotizar%20un%20env%C3%ADo" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</a>
+
+<!-- ── TRACKING MODAL ── -->
+<div id="modal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    </div>
+    <span class="badge" style="margin-bottom:16px">
+      <span class="badge-dot"></span>
+      En desarrollo
+    </span>
+    <div class="modal-title">Módulo de Tracking<br>en Actualización</div>
+    <div class="modal-text">
+      Muy pronto podrás rastrear tus contenedores y envíos en <strong style="color:var(--cyan-l)">tiempo real</strong>. Estamos construyendo una plataforma de seguimiento de última generación para darte visibilidad total de tu carga.<br><br>
+      Mientras tanto, contacta a nuestro equipo para obtener actualizaciones de tu envío.
+    </div>
+    <div class="modal-btns">
+      <a href="https://wa.me/+1234567890" class="btn-wa" style="text-decoration:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        WhatsApp
+      </a>
+      <button class="btn-outline" style="border:none;background:rgba(56,189,248,.12);color:var(--cyan);border:1.5px solid rgba(56,189,248,.35)" onclick="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Navbar scroll ──
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>40)});
+
+// ── Mobile drawer ──
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('overlay').classList.add('open')}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('open')}
+
+// ── Modal ──
+function openModal(){document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+// ── Scroll-triggered fade-up ──
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})
+},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
