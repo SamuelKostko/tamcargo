@@ -758,6 +758,13 @@ const services = [
     desc: "Transporte de contenedores FCL y LCL (consolidados). Salidas semanales hacia puertos venezolanos e internacionales con seguimiento completo.",
     features: ["Contenedores FCL / LCL", "Consolidados semanales", "Puerta a Puerta", "Permisos de exportación"],
   },
+    {
+    icon: Ship,
+    title: "Consolidación de Carga",
+    color: "#B11E22",
+    desc: "Consolida tus envíos para optimizar costos. Agrupamos tu carga con otros clientes hacia destinos comunes, manteniendo la seguridad y tiempos de entrega. Durante un mes sin costo adicional.",
+    features: ["Contenedores FCL / LCL", "Consolidados semanales", "Puerta a Puerta", "Permisos de exportación"],
+  },
 
   {
     icon: FileCheck,
