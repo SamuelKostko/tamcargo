@@ -973,7 +973,13 @@ const services = [
     desc: "Transporte de contenedores FCL y LCL (consolidados). Salidas constantes hacia puertos venezolanos e internacionales con seguimiento completo.",
     features: ["Contenedores FCL / LCL", "Consolidados recurrentes", "Permisos de exportación"],
   },
-
+    {
+    icon: Plane,
+    title: "Carga Aérea",
+    color: "#B11E22",
+    desc: "Transporte de carga aérea internacional. Salidas constantes hacia destinos globales con seguimiento completo.",
+    features: ["Vuelos recurrentes", "Seguimiento en tiempo real", "Manejo de documentación","Solo disponible carga comercial"],
+  },
   {
     icon: FileCheck,
     title: "Gestión Aduanera",
@@ -1023,6 +1029,7 @@ function Services() {
                 position: "relative",
                 overflow: "hidden",
                 textAlign: "left",
+                background: "#cecece",
               }}>
               {/* Icon */}
               <div style={{
