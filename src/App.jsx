@@ -566,6 +566,199 @@ function PrivacyPolicyModal({ onClose }) {
   );
 }
 
+function TermsOfServiceModal({ onClose }) {
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div
+        className="modal-card grad-border"
+        onClick={e => e.stopPropagation()}
+        style={{ maxWidth: 820, width: "100%", padding: "36px 32px", position: "relative" }}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: 14,
+            right: 14,
+            background: "none",
+            border: "none",
+            color: C.gray,
+            cursor: "pointer",
+          }}
+          aria-label="Cerrar términos de servicio"
+        >
+          <X size={18} />
+        </button>
+
+        <h3 style={{ fontSize: "1.35rem", fontWeight: 700, marginBottom: 14 }}>
+          Términos de Servicio
+        </h3>
+        <div
+          style={{
+            maxHeight: "62vh",
+            overflowY: "auto",
+            paddingRight: 8,
+            textAlign: "left",
+          }}
+        >
+          <h4 style={{ fontSize: "1rem", fontWeight: 700, color: C.white, marginBottom: 10 }}>
+            Términos y Condiciones del Servicio Logístico
+          </h4>
+          <p style={{ color: C.grayLight, lineHeight: 1.7, marginBottom: 14 }}>
+            Al contratar nuestros servicios, el Cliente acepta de manera íntegra las siguientes cláusulas.
+          </p>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            1. Trayectoria y Capacidad Operativa
+          </h5>
+          <p style={{ color: C.gray, lineHeight: 1.7, marginBottom: 10 }}>
+            La Empresa declara contar con más de 20 años de experiencia en el sector de logística internacional.
+            Todos los servicios son gestionados por personal altamente capacitado normativamente en aduanas,
+            cubicaje y gestión de riesgos, garantizando un estándar de ejecución profesional en cada etapa de
+            la cadena de suministro.
+          </p>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            2. Servicios de Consolidación de Carga
+          </h5>
+          <ul style={{ margin: "0 0 12px 18px", color: C.grayLight, lineHeight: 1.7 }}>
+            <li>
+              <strong>Beneficio de Gratuidad:</strong> La Empresa ofrece un servicio de consolidación de carga
+              de diferentes proveedores sin costo de almacenaje por un período máximo de treinta (30) días
+              calendario (un mes).
+            </li>
+            <li>
+              <strong>Cargos Posteriores:</strong> Transcurrido el mes de gratuidad, se generarán cargos por
+              almacenaje según la tarifa vigente, a menos que se pacte lo contrario por escrito.
+            </li>
+            <li>
+              <strong>Responsabilidad:</strong> El Cliente es responsable de asegurar que sus proveedores entreguen
+              la carga con la documentación técnica y comercial correcta para su debida consolidación.
+            </li>
+          </ul>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            3. Confidencialidad Blindada y Protección de Datos
+          </h5>
+          <p style={{ color: C.gray, lineHeight: 1.7, marginBottom: 10 }}>
+            Este es un pilar fundamental de nuestra relación comercial.
+          </p>
+          <ul style={{ margin: "0 0 12px 18px", color: C.grayLight, lineHeight: 1.7 }}>
+            <li>
+              <strong>Aislamiento de Información:</strong> La Empresa se compromete a no compartir, bajo ninguna
+              circunstancia, información relativa a los proveedores, orígenes, costos o estatus de carga de un
+              Cliente con otros clientes o terceros ajenos a la operación logística.
+            </li>
+            <li>
+              <strong>Secreto Comercial:</strong> Reconocemos que la red de proveedores del Cliente es un activo
+              estratégico. Nuestro personal está sujeto a acuerdos de confidencialidad estrictos para proteger
+              esta información.
+            </li>
+            <li>
+              <strong>Uso de Datos:</strong> Los datos proporcionados se utilizarán exclusivamente para la ejecución
+              de los servicios contratados y el cumplimiento de normativas legales.
+            </li>
+          </ul>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            4. Fletes y Entregas
+          </h5>
+          <ul style={{ margin: "0 0 12px 18px", color: C.grayLight, lineHeight: 1.7 }}>
+            <li>
+              <strong>Entrega Garantizada:</strong> La Empresa se compromete a realizar sus mejores esfuerzos para
+              cumplir con los tiempos de tránsito estimados. No obstante, no se hace responsable por retrasos
+              derivados de causas de fuerza mayor, huelgas, condiciones climáticas o demoras en inspecciones
+              aduaneras ajenas a nuestro control.
+            </li>
+            <li>
+              <strong>Seguro de Carga:</strong> Se recomienda al Cliente la contratación de un seguro de carga.
+              La responsabilidad de La Empresa se limita a lo establecido en los convenios internacionales de
+              transporte (CIM, CMR, Reglas de Hamburgo, etc.).
+            </li>
+          </ul>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            5. Búsqueda de Proveedores
+          </h5>
+          <p style={{ color: C.gray, lineHeight: 1.7, marginBottom: 10 }}>
+            En el servicio de búsqueda de proveedores, La Empresa actúa como facilitador basado en su experiencia
+            de mercado. La decisión final de compra y la calidad intrínseca de los productos son responsabilidad
+            del Cliente y su relación directa con el fabricante.
+          </p>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            6. Obligaciones del Cliente
+          </h5>
+          <p style={{ color: C.gray, lineHeight: 1.7, marginBottom: 10 }}>
+            El Cliente garantiza que toda la información suministrada sobre la naturaleza de la carga es veraz y
+            cumple con las leyes internacionales de comercio, absteniéndose de enviar mercancías peligrosas o
+            prohibidas sin previa declaración y autorización.
+          </p>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            7. Responsabilidades y Gastos Adicionales
+          </h5>
+          <ul style={{ margin: "0 0 12px 18px", color: C.grayLight, lineHeight: 1.7 }}>
+            <li>
+              <strong>Gastos de Terceros:</strong> La Empresa no se hace responsable por gastos extraordinarios
+              generados por almacenajes en puertos, depósitos externos o recargos impuestos por las autoridades
+              aduaneras derivados de inspecciones, demoras del cliente o falta de documentación del proveedor.
+            </li>
+            <li>
+              <strong>Revisiones y Decomisos:</strong> La Empresa no asume responsabilidad alguna por objetos
+              extraviados, dañados o faltantes durante las revisiones físicas realizadas por las autoridades de
+              aduana, ni por el decomiso de mercancías por parte de entes gubernamentales.
+            </li>
+            <li>
+              <strong>Daños Fortuitos:</strong> La Empresa no se hace responsable por daños sufridos en la carga
+              debidos a casos fortuitos, fuerza mayor o incidentes durante el tránsito que escapan al control
+              directo de nuestro personal. Se recomienda encarecidamente la contratación de un seguro de carga.
+            </li>
+          </ul>
+
+          <h5 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.white, margin: "16px 0 8px" }}>
+            8. Determinación de Costos, Pesaje y Condiciones de Pago
+          </h5>
+          <ul style={{ margin: "0 0 12px 18px", color: C.grayLight, lineHeight: 1.7 }}>
+            <li>
+              <strong>Liquidación Final y Re-pese:</strong> El costo total del servicio logístico se determinará de
+              manera definitiva una vez que la carga llegue a nuestro almacén de recepción en origen. Al recibir la
+              mercancía, nuestro personal procederá a la medición técnica y pesaje físico (re-pese). Los costos
+              finales se basarán exclusivamente en estas medidas confirmadas, las cuales prevalecerán sobre cualquier
+              estimación previa o información proporcionada en facturas comerciales y listas de empaque (packing list).
+            </li>
+            <li>
+              <strong>Momento y Lugar de Cobro:</strong> El pago total de los servicios contratados, fletes y gastos
+              asociados se realizará de manera obligatoria una vez que la carga se encuentre en la Aduana de Venezuela.
+            </li>
+            <li>
+              <strong>Condición de Entrega:</strong> La liberación de la mercancía y su posterior entrega al Cliente
+              o transporte final en territorio nacional están estrictamente sujetas a la cancelación total de la
+              factura emitida. La Empresa se reserva el derecho de retener la carga hasta que el pago haya sido
+              verificado satisfactoriamente.
+            </li>
+            <li>
+              <strong>Gastos Extraordinarios:</strong> No nos hacemos responsables por gastos extras generados por
+              almacenajes, demoras o recargos por aduanas derivados de falta de pago oportuno por parte del Cliente
+              o retrasos en la documentación requerida.
+            </li>
+          </ul>
+
+          <p style={{ color: C.grayLight, lineHeight: 1.7, marginBottom: 6 }}>
+            La aceptación de estos términos se entiende otorgada al contratar cualquiera de nuestros servicios.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 18 }}>
+          <button onClick={onClose} className="btn-outline" style={{ fontSize: "0.85rem", padding: "10px 18px" }}>
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────
    COMPONENT: Hero
 ───────────────────────────────────────── */
@@ -786,7 +979,7 @@ function Services() {
   const { ref, visible } = useScrollAnimation();
 
   return (
-    <section id="servicios" style={{ padding: "100px 24px", maxWidth: 1200, margin: "0 auto" }}>
+    <section id="servicios" style={{ padding: "100px 24px", maxWidth: 1380, margin: "0 auto" }}>
       <div ref={ref} className={`fade-up ${visible ? "visible" : ""}`} style={{ textAlign: "center", marginBottom: 64 }}>
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
@@ -808,15 +1001,21 @@ function Services() {
 
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-        gap: 20,
+        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+        gap: 24,
       }}>
         {services.map((s, i) => {
           const { ref: cRef, visible: cVis } = useScrollAnimation();
           return (
             <div key={s.title} ref={cRef}
               className={`grad-border card-hover fade-up ${cVis ? "visible" : ""} delay-${i + 1}`}
-              style={{ padding: "32px 28px", cursor: "default", position: "relative", overflow: "hidden" }}>
+              style={{
+                padding: "34px 30px",
+                cursor: "default",
+                position: "relative",
+                overflow: "hidden",
+                textAlign: "left",
+              }}>
               {/* Icon */}
               <div style={{
                 width: 52, height: 52, borderRadius: 12, marginBottom: 20,
@@ -827,14 +1026,14 @@ function Services() {
                 <s.icon size={24} color={s.color} />
               </div>
 
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 10 }}>{s.title}</h3>
-              <p style={{ color: C.gray, fontSize: "0.87rem", lineHeight: 1.65, marginBottom: 20 }}>{s.desc}</p>
+              <h3 style={{ fontSize: "1.22rem", fontWeight: 700, marginBottom: 12 }}>{s.title}</h3>
+              <p style={{ color: C.gray, fontSize: "0.95rem", lineHeight: 1.75, marginBottom: 22 }}>{s.desc}</p>
 
-              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 7 }}>
+              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
                 {s.features.map(f => (
-                  <li key={f} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.82rem", color: C.grayLight }}>
-                    <CheckCircle2 size={13} color={s.color} />
-                    {f}
+                  <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: "0.92rem", color: C.grayLight, lineHeight: 1.45 }}>
+                    <CheckCircle2 size={14} color={s.color} style={{ marginTop: 2, flexShrink: 0 }} />
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
@@ -1033,14 +1232,14 @@ function Contact() {
         borderRadius: 24, padding: "64px 48px",
         display: "grid", gridTemplateColumns: "1fr auto", gap: 40, alignItems: "center",
       }}>
-        <div>
+        <div style={{ textAlign: "center" }}>
           <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 12, color: "#fff" }}>
             ¿Listo para enviar tu carga?
           </h2>
-          <p style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.65, maxWidth: 480, marginBottom: 24}}>
+          <p style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.65, maxWidth: 480, margin: "0 auto 24px" }}>
             Contáctanos hoy y recibe una cotización personalizada en menos de 24 horas. Nuestro equipo de expertos está listo para asesorarte.
           </p>
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
             <a href="tel:+584123580995" style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,0.92)", textDecoration: "none", fontSize: "0.88rem" }}>
               <Phone size={15} color={C.cyan} /> +58 (412) 358-0995
             </a>
@@ -1066,7 +1265,7 @@ function Contact() {
 /* ─────────────────────────────────────────
    COMPONENT: Footer
 ───────────────────────────────────────── */
-function Footer({ onOpenPrivacy }) {
+function Footer({ onOpenPrivacy, onOpenTerms }) {
   const footerLinks = {
     "Servicios": ["Carga Marítima", "Carga Aérea", "Transporte Terrestre", "Gestión Aduanera", "Almacenaje"],
     "Legal": ["Términos de Servicio", "Política de Privacidad"],
@@ -1129,6 +1328,10 @@ function Footer({ onOpenPrivacy }) {
                       href="#"
                       style={{ color: C.gray, textDecoration: "none", fontSize: "0.85rem", transition: "color 0.2s" }}
                       onClick={e => {
+                        if (l === "Términos de Servicio") {
+                          e.preventDefault();
+                          onOpenTerms();
+                        }
                         if (l === "Política de Privacidad") {
                           e.preventDefault();
                           onOpenPrivacy();
@@ -1167,6 +1370,7 @@ function Footer({ onOpenPrivacy }) {
 export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   return (
     <>
@@ -1182,7 +1386,10 @@ export default function App() {
         <Contact />
       </main>
 
-      <Footer onOpenPrivacy={() => setShowPrivacyModal(true)} />
+      <Footer
+        onOpenPrivacy={() => setShowPrivacyModal(true)}
+        onOpenTerms={() => setShowTermsModal(true)}
+      />
 
       {/* WhatsApp FAB */}
       <a
@@ -1198,6 +1405,7 @@ export default function App() {
       {/* Tracking modal */}
       {showModal && <TrackingModal onClose={() => setShowModal(false)} />}
       {showPrivacyModal && <PrivacyPolicyModal onClose={() => setShowPrivacyModal(false)} />}
+      {showTermsModal && <TermsOfServiceModal onClose={() => setShowTermsModal(false)} />}
     </>
   );
 }
