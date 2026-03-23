@@ -13,6 +13,7 @@ import {
   Facebook, Linkedin, Twitter, Zap
 } from "lucide-react";
 import tamCargoLogo from "./assets/TAM CARGO.png";
+import tamFondo from "./assets/TAM.png";
 import heroImage from "./assets/hero.png";
 
 /* ─────────────────────────────────────────
@@ -323,13 +324,7 @@ function Navbar({ onTrack }) {
         transition: "all 0.3s ease",
       }}>
         {/* Logo */}
-        <a href="#" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-          <img
-            src={tamCargoLogo}
-            alt="TAM Cargo"
-            style={{ height: 34, width: "auto", objectFit: "contain" }}
-          />
-        </a>
+
 
         {/* Desktop links */}
         <div className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: "32px" }}>
@@ -729,7 +724,7 @@ function TermsOfServiceModal({ onClose }) {
             </li>
             <li>
               <strong>Momento y Lugar de Cobro:</strong> El pago total de los servicios contratados, fletes y gastos
-              asociados se realizará de manera obligatoria una vez que la carga se encuentre en la Aduana de Venezuela.
+              asociados se realizará de manera obligatoria una vez que la carga se encuentre en la Aduana destino.
             </li>
             <li>
               <strong>Condición de Entrega:</strong> La liberación de la mercancía y su posterior entrega al Cliente
@@ -775,7 +770,7 @@ function Hero({ onTrack }) {
       {/* Background image with overlay */}
       <div style={{
         position: "absolute", inset: 0, zIndex: 0,
-        backgroundImage: `url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1800&q=80&auto=format&fit=crop')`,
+        backgroundImage: `url(${tamFondo})`,
         backgroundSize: "cover", backgroundPosition: "center",
         opacity: 1,
         filter: "brightness(0.4)",
@@ -818,6 +813,19 @@ function Hero({ onTrack }) {
         alignItems: "center",
         textAlign: "center",
       }}>
+        <div style={{ marginBottom: 20, animation: "slideUp 0.7s ease both" }}>
+          <img
+            src={tamCargoLogo}
+            alt="TAM Cargo"
+            style={{
+              height: "clamp(72px, 12vw, 130px)",
+              width: "auto",
+              objectFit: "contain",
+              filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.35))",
+            }}
+          />
+        </div>
+
         {/* Badge */}
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
