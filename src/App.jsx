@@ -751,19 +751,26 @@ function Hero({ onTrack }) {
    COMPONENT: Services
 ───────────────────────────────────────── */
 const services = [
+    {
+    icon: Ship,
+    title: "Consolidación de Carga",
+    color: "#B11E22",
+    desc: "Consolida tu carga para optimizar costos. Agrupamos tu carga,  manteniendo la seguridad y tiempos de entrega. Durante un mes sin costo adicional.",
+    features: ["Pick-up en China", "Almacenaje gratuito por 30 días", "Re-packing adaptado a tu carga", "Seguimiento dedicado"],
+  },
+  {
+    icon: FileCheck,
+    title: "Módulo de compras",
+    color: "#B11E22",
+    desc: "Asesoría en la compra de productos chinos, desde la selección hasta la recepción en nuestro almacén.",
+    features: ["Pago a proveedores", "Búsqueda de proveedores", "Manejo de ordenes"],
+  },
   {
     icon: Ship,
     title: "Carga Marítima",
     color: "#B11E22",
     desc: "Transporte de contenedores FCL y LCL (consolidados). Salidas semanales hacia puertos venezolanos e internacionales con seguimiento completo.",
     features: ["Contenedores FCL / LCL", "Consolidados semanales", "Puerta a Puerta", "Permisos de exportación"],
-  },
-    {
-    icon: Ship,
-    title: "Consolidación de Carga",
-    color: "#B11E22",
-    desc: "Consolida tus envíos para optimizar costos. Agrupamos tu carga con otros clientes hacia destinos comunes, manteniendo la seguridad y tiempos de entrega. Durante un mes sin costo adicional.",
-    features: ["Pick-up en China", "Almacenaje gratuito por 30 días", "Re-packing adaptado a tu carga", "Seguimiento dedicado"],
   },
 
   {
