@@ -298,7 +298,7 @@ const globalStyles = `
   .contact-band {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 40px;
+    gap: 22px;
     align-items: center;
   }
 
@@ -312,7 +312,7 @@ const globalStyles = `
   .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 2fr;
-    gap: 40px;
+    gap: 22px;
   }
 
   .footer-address-grid {
@@ -910,7 +910,7 @@ function Hero({ onTrack }) {
       <div style={{
         position: "relative", zIndex: 3,
         maxWidth: 1200, margin: "0 auto",
-        padding: "120px 24px 80px",
+        padding: "90px 18px 44px",
         width: "100%",
         display: "flex",
         flexDirection: "column",
@@ -970,7 +970,7 @@ function Hero({ onTrack }) {
           margin: "0 auto 40px",
           animation: "slideUp 0.7s 0.2s ease both",
         }}>
-          Soluciones integrales de transporte <strong style={{ color: "white" }}>Marítimo, Aéreo y Terrestre</strong> con gestión aduanera incluida. Especialistas en envíos a Venezuela e Internacional.
+          Soluciones integrales de transporte <strong style={{ color: "white" }}>Marítimo, Aéreo y Terrestre</strong> con gestión aduanera incluida. Especialistas en envíos a Venezuela y Worldwide.
         </p>
 
         {/* Tracking search bar */}
@@ -981,7 +981,7 @@ function Hero({ onTrack }) {
           border: "1.5px solid rgba(217,101,104,0.3)",
           borderRadius: 12,
           overflow: "hidden",
-          margin: "0 auto 40px",
+          margin: "0 auto 20px",
           backdropFilter: "blur(8px)",
           animation: "slideUp 0.7s 0.3s ease both",
         }}>
@@ -1024,11 +1024,11 @@ function Hero({ onTrack }) {
 
         {/* Mini stats */}
         <div style={{
-          display: "flex", gap: 32, marginTop: 56, flexWrap: "wrap", justifyContent: "center",
+          display: "flex", gap: 18, marginTop: 30, flexWrap: "wrap", justifyContent: "center",
           animation: "slideUp 0.7s 0.5s ease both",
         }}>
           {[
-            { value: "15+", label: "Años de experiencia" },
+            { value: "20+", label: "Años de experiencia" },
             { value: "99%", label: "Entregas a tiempo" },
           ].map(s => (
             <div key={s.label} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -1096,8 +1096,8 @@ function Services() {
   const { ref, visible } = useScrollAnimation();
 
   return (
-    <section id="servicios" style={{ padding: "100px 24px", maxWidth: 1380, margin: "0 auto" }}>
-      <div ref={ref} className={`fade-up ${visible ? "visible" : ""}`} style={{ textAlign: "center", marginBottom: 64 }}>
+    <section id="servicios" style={{ padding: "56px 18px", maxWidth: 1380, margin: "0 auto" }}>
+      <div ref={ref} className={`fade-up ${visible ? "visible" : ""}`} style={{ textAlign: "center", marginBottom: 30 }}>
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
           background: "rgba(177,30,34,0.1)", border: "1px solid rgba(177,30,34,0.3)",
@@ -1191,15 +1191,15 @@ function Trust() {
 
   return (
     <section id="confianza" style={{
-      position: "relative", padding: "100px 0", overflow: "hidden",
+      position: "relative", padding: "56px 0", overflow: "hidden",
       background: "linear-gradient(180deg, transparent, rgba(177,30,34,0.04) 50%, transparent)",
     }}>
-      <hr className="h-stripe" style={{ maxWidth: 800, margin: "0 auto 80px" }} />
+      <hr className="h-stripe" style={{ maxWidth: 800, margin: "0 auto 34px" }} />
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         {/* Stats row */}
         <div ref={ref} className={`fade-up ${visible ? "visible" : ""}`}
-          style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 16, marginBottom: 80 }}>
+          style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 16, marginBottom: 34 }}>
           {stats.map((s, i) => (
             <div key={s.label} className="stat-card">
               <s.icon size={22} color={C.cyan} style={{ marginBottom: 12 }} />
@@ -1210,7 +1210,7 @@ function Trust() {
         </div>
 
         {/* Two column: text + reasons */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 26, alignItems: "start" }}
           className="two-col-responsive">
           <div>
             <div style={{
@@ -1229,7 +1229,7 @@ function Trust() {
             <p style={{ color: C.gray, lineHeight: 1.75, marginBottom: 20, fontSize: "0.93rem" }}>
               En TAM Cargo nos dedicamos al transporte marítimo y aéreo, así como a soluciones logísticas integrales: aduanas y almacenaje. Somos el puente confiable entre tus negocios y Venezuela.
             </p>
-            <p style={{ color: C.gray, lineHeight: 1.75, fontSize: "0.93rem", marginBottom: 32 }}>
+            <p style={{ color: C.gray, lineHeight: 1.75, fontSize: "0.93rem", marginBottom: 22 }}>
               Con presencia en Estados Unidos, China y Venezuela, ofrecemos cobertura completa con personal especializado en cada nodo de la cadena de suministro.
             </p>
             <a href="#contacto" className="btn-primary" style={{ background: "linear-gradient(135deg, #B11E22, #d96568)" }}>
@@ -1280,7 +1280,7 @@ function About() {
     <section
       id="nosotros"
       style={{
-        padding: "80px 0",
+        padding: "46px 0",
         backgroundImage:
           "linear-gradient(rgba(18,10,11,0.82), rgba(18,10,11,0.82)), url('https://www.publicdomainpictures.net/pictures/500000/velka/containerschip-vrachtschip-boot-1679508667oFJ.jpg')",
         backgroundSize: "cover",
@@ -1307,9 +1307,9 @@ function About() {
         </h2>
         <p style={{
           fontSize: "1.05rem", lineHeight: 1.8, color: "rgba(255,255,255,0.92)",
-          maxWidth: 680, margin: "0 auto 32px",
+          maxWidth: 680, margin: "0 auto 22px",
           background: "rgba(255,255,255,0.06)", border: "1px solid rgba(217,101,104,0.28)",
-          borderRadius: 16, padding: "32px 40px",
+          borderRadius: 16, padding: "20px 18px",
         }}>
           "Brindar soluciones logísticas integrales de transporte marítimo y aéreo con los más altos estándares de calidad, seguridad y puntualidad, conectando a nuestros clientes con el mundo y facilitando el comercio internacional hacia Venezuela y destinos globales."
         </p>
@@ -1339,7 +1339,7 @@ function Contact() {
     <section
       id="contacto"
       style={{
-        padding: "80px 24px",
+        padding: "42px 18px",
         background: "#fff",
       }}
     >
@@ -1347,7 +1347,7 @@ function Contact() {
         maxWidth: 1200, margin: "0 auto",
         background: "linear-gradient(145deg, #1a0f11 0%, #241416 60%, #2a171a 100%)",
         border: "1px solid rgba(217,101,104,0.35)",
-        borderRadius: 24, padding: "64px 48px",
+        borderRadius: 24, padding: "36px 24px",
       }}>
         <div style={{ textAlign: "center" }}>
           <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 12, color: "#fff" }}>
@@ -1399,10 +1399,10 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
     <footer style={{
       background: C.navyMid,
       borderTop: "1px solid rgba(177,30,34,0.15)",
-      padding: "64px 24px 24px",
+      padding: "34px 18px 14px",
     }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div className="footer-grid" style={{ marginBottom: 48 }}>
+        <div className="footer-grid" style={{ marginBottom: 22 }}>
           {/* Brand col */}
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
