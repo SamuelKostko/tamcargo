@@ -198,12 +198,12 @@ const globalStyles = `
   /* Mobile menu */
   .mobile-menu {
     position: fixed;
-    top: 0; right: 0;
+    top: 0; left: 0;
     width: 280px; height: 100vh;
     background: var(--navy-mid);
-    border-left: 1px solid rgba(177,30,34,0.2);
+    border-right: 1px solid rgba(177,30,34,0.2);
     z-index: 9000;
-    transform: translateX(100%);
+    transform: translateX(-100%);
     transition: transform 0.35s ease;
     display: flex;
     flex-direction: column;
@@ -281,11 +281,115 @@ const globalStyles = `
   }
   .btn-outline:hover { background: rgba(217,101,104,0.1); transform: translateY(-1px); }
 
+  .hero-badge {
+    max-width: 100%;
+  }
+  .hero-badge-text {
+    white-space: normal;
+    line-height: 1.45;
+  }
+
+  .hero-search-form {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .contact-band {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 2fr;
+    gap: 40px;
+  }
+
+  .footer-address-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 14px;
+  }
+
   /* Responsive utils */
   @media (max-width: 768px) {
     .hide-mobile { display: none !important; }
     .show-mobile { display: flex !important; }
+
+    .hero-search-form {
+      flex-direction: column;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .hero-search-form button {
+      justify-content: center;
+      width: 100%;
+      min-height: 48px;
+    }
+
+    .hero-badge {
+      padding: 8px 12px !important;
+      margin-bottom: 20px !important;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .hero-badge-text {
+      font-size: 0.68rem !important;
+      letter-spacing: 0.05em !important;
+    }
+
+    .contact-band {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 36px 22px !important;
+      text-align: center;
+    }
+
+    .contact-actions {
+      width: 100%;
+      align-items: stretch;
+    }
+
+    .contact-actions a {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 26px;
+    }
+
+    .footer-address-grid {
+      grid-template-columns: 1fr;
+      row-gap: 12px;
+    }
   }
+
+  @media (min-width: 769px) and (max-width: 1100px) {
+    .footer-grid {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+
+    .footer-address-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   @media (min-width: 769px) {
     .show-mobile { display: none !important; }
   }
@@ -827,14 +931,14 @@ function Hero({ onTrack }) {
         </div>
 
         {/* Badge */}
-        <div style={{
+        <div className="hero-badge" style={{
           display: "inline-flex", alignItems: "center", gap: 8,
           background: "rgba(177,30,34,0.15)", border: "1px solid rgba(217,101,104,0.3)",
           borderRadius: 24, padding: "6px 16px", marginBottom: 28,
           animation: "slideUp 0.7s ease both",
         }}>
           <Globe size={13} color={C.cyan} />
-          <span style={{ fontSize: "0.75rem", color: C.cyan, fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          <span className="hero-badge-text" style={{ fontSize: "0.75rem", color: C.cyan, fontFamily: "var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
             Logística Internacional · Desde China hasta Venezuela y el Mundo
           </span>
         </div>
@@ -870,8 +974,7 @@ function Hero({ onTrack }) {
         </p>
 
         {/* Tracking search bar */}
-        <form onSubmit={handleSearch} style={{
-          display: "flex", alignItems: "stretch", gap: 0,
+        <form className="hero-search-form" onSubmit={handleSearch} style={{
           maxWidth: 560,
           width: "100%",
           background: "rgba(177,30,34,0.1)",
@@ -1240,12 +1343,11 @@ function Contact() {
         background: "#fff",
       }}
     >
-      <div ref={ref} className={`fade-up ${visible ? "visible" : ""}`} style={{
+      <div ref={ref} className={`fade-up ${visible ? "visible" : ""} contact-band`} style={{
         maxWidth: 1200, margin: "0 auto",
         background: "linear-gradient(145deg, #1a0f11 0%, #241416 60%, #2a171a 100%)",
         border: "1px solid rgba(217,101,104,0.35)",
         borderRadius: 24, padding: "64px 48px",
-        display: "grid", gridTemplateColumns: "1fr auto", gap: 40, alignItems: "center",
       }}>
         <div style={{ textAlign: "center" }}>
           <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 12, color: "#fff" }}>
@@ -1263,7 +1365,7 @@ function Contact() {
             </a>
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-start" }}>
+        <div className="contact-actions">
           <a href="https://wa.me/+584123580995" className="btn-primary"
             style={{ background: "linear-gradient(135deg, #25d366, #128c7e)", padding: "13px 28px" }}>
             <MessageCircle size={16} /> WhatsApp
@@ -1285,6 +1387,13 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
     "Servicios": ["Carga Marítima", "Carga Aérea", "Transporte Terrestre", "Gestión Aduanera", "Almacenaje"],
     "Legal": ["Términos de Servicio", "Política de Privacidad"],
   };
+  const footerAddresses = [
+    { title: "España", detail: "Calle Mario Roso De Luna 29. Nave 1 Posterior. San Blas Canillejas. 28022" },
+    { title: "Estados Unidos", detail: "8000 NW 29th St, Doral, FL 33122/33198" },
+    { title: "Venezuela", detail: "Caracas" },
+    { title: "China", detail: "Room 101, Building 1, Factory Area, No. 31 Fulin Road, Fuzhushan, Liaobu Town, Dongguan City, Guangdong Province" },
+
+  ];
 
   return (
     <footer style={{
@@ -1293,11 +1402,7 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
       padding: "64px 24px 24px",
     }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 1fr 1fr",
-          gap: 40, marginBottom: 48,
-        }}>
+        <div className="footer-grid" style={{ marginBottom: 48 }}>
           {/* Brand col */}
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -1362,6 +1467,23 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
               </ul>
             </div>
           ))}
+
+          <div style={{ textAlign: "left" }}>
+            <h4 style={{ fontSize: "0.78rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: C.white, marginBottom: 16 }}>
+              Direcciones
+            </h4>
+            <ul className="footer-address-grid">
+              {footerAddresses.map(item => (
+                <li key={item.title} style={{ display: "flex", alignItems: "flex-start", gap: 8, textAlign: "left" }}>
+                  <MapPin size={14} color={C.cyan} style={{ marginTop: 2, flexShrink: 0 }} />
+                  <div style={{ lineHeight: 1.55 }}>
+                    <div style={{ color: C.grayLight, fontSize: "0.86rem", fontWeight: 600 }}>{item.title}</div>
+                    <div style={{ color: C.gray, fontSize: "0.82rem", marginTop: 2, overflowWrap: "anywhere" }}>{item.detail}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <hr style={{ border: "none", borderTop: "1px solid rgba(177,30,34,0.1)", marginBottom: 24 }} />
