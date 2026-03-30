@@ -1,4 +1,4 @@
-﻿/**
+/**
  * TAM Cargo — Landing Page
  * Stack: React + Tailwind (via CDN config) + Lucide-React + Framer-Motion-like CSS
  * Architecture mirrors: /src/components/{Navbar, Hero, Tracking, Services, Trust, Footer}
@@ -20,16 +20,16 @@ import heroImage from "./assets/hero.png";
    DESIGN TOKENS  (mirrors tailwind.config)
 ───────────────────────────────────────── */
 const C = {
-  navy:    "#fff7f7",
+  navy: "#fff7f7",
   navyMid: "#fff1f1",
-  navyLight:"#ffe4e4",
-  electric:"#B11E22",
-  electricLight:"#c9474a",
-  cyan:    "#d96568",
-  cyanLight:"#e78f91",
-  white:   "#241415",
-  gray:    "#7a5e60",
-  grayLight:"#4f383a",
+  navyLight: "#ffe4e4",
+  electric: "#B11E22",
+  electricLight: "#c9474a",
+  cyan: "#d96568",
+  cyanLight: "#e78f91",
+  white: "#241415",
+  gray: "#7a5e60",
+  grayLight: "#4f383a",
 };
 
 /* ─────────────────────────────────────────
@@ -398,7 +398,7 @@ const globalStyles = `
 /* ─────────────────────────────────────────
    COMPONENT: Navbar
 ───────────────────────────────────────── */
-function Navbar({ onTrack }) {
+function Navbar({ onTrack, onFreight }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -442,10 +442,19 @@ function Navbar({ onTrack }) {
           <button
             className="btn-primary hide-mobile"
             onClick={onTrack}
-            style={{ padding: "8px 18px", fontSize: "0.82rem",
-              background: "linear-gradient(135deg, #B11E22, #d96568)" }}
+            style={{
+              padding: "8px 18px", fontSize: "0.82rem",
+              background: "linear-gradient(135deg, #B11E22, #d96568)"
+            }}
           >
             <Search size={14} /> Rastrear Carga
+          </button>
+          <button
+            className="btn-outline hide-mobile"
+            onClick={onFreight}
+            style={{ padding: "8px 18px", fontSize: "0.82rem" }}
+          >
+            <BarChart3 size={14} /> Cálculo de Flete
           </button>
           <button
             className="show-mobile"
@@ -468,15 +477,21 @@ function Navbar({ onTrack }) {
         </button>
         {links.map((l, i) => (
           <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
-            style={{ color: C.grayLight, textDecoration: "none", fontSize: "1rem", fontWeight: 500,
+            style={{
+              color: C.grayLight, textDecoration: "none", fontSize: "1rem", fontWeight: 500,
               padding: "12px 0", borderBottom: "1px solid rgba(177,30,34,0.08)",
-              display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              display: "flex", alignItems: "center", justifyContent: "space-between"
+            }}>
             {l.label} <ChevronRight size={16} color={C.cyan} />
           </a>
         ))}
         <button className="btn-primary" onClick={() => { onTrack(); setMenuOpen(false); }}
           style={{ marginTop: 24, justifyContent: "center", background: "linear-gradient(135deg, #B11E22, #d96568)" }}>
           <Search size={15} /> Rastrear Carga
+        </button>
+        <button className="btn-outline" onClick={() => { onFreight(); setMenuOpen(false); }}
+          style={{ marginTop: 12, justifyContent: "center" }}>
+          <BarChart3 size={15} /> Cálculo de Flete
         </button>
       </div>
       {menuOpen && (
@@ -526,7 +541,7 @@ function TrackingModal({ onClose }) {
           Módulo de Tracking <br />en Actualización
         </h3>
         <p style={{ color: C.gray, fontSize: "0.9rem", lineHeight: 1.65, marginBottom: 28 }}>
-          Muy pronto podrás rastrear tus contenedores y envíos en <strong style={{ color: C.cyanLight }}>tiempo real</strong>. 
+          Muy pronto podrás rastrear tus contenedores y envíos en <strong style={{ color: C.cyanLight }}>tiempo real</strong>.
           Estamos construyendo una plataforma de seguimiento de última generación para darte visibilidad total de tu carga.
         </p>
         <p style={{ color: C.grayLight, fontSize: "0.82rem", marginBottom: 28 }}>
@@ -541,6 +556,541 @@ function TrackingModal({ onClose }) {
             Cerrar
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function FreightCalculatorModal({ onClose }) {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    origen: "miami",
+    destino: "Caracas",
+    modalidad: "aereo",
+    tipoCarga: "general",
+    descripcion: "",
+    peso: "",
+    largo: "",
+    ancho: "",
+    alto: "",
+    cantidad: 1,
+    cbmDirecto: ""
+  });
+
+  const [resultado, setResultado] = useState(null);
+
+  const TARIFAS = {
+    miami: {
+      Caracas: {
+        aereo: {
+          general: { rate: 5.50, unit: "lb", time: "7-12 días" },
+          especial: { rate: 7.50, unit: "lb", time: "7-12 días" }
+        },
+        maritimo: {
+          general: { rate: 32.00, unit: "ft³", time: "15-25 días" },
+          especial: { rate: 38.00, unit: "ft³", time: "15-25 días" }
+        }
+      },
+      Margarita: {
+        aereo: {
+          general: { rate: 6.50, unit: "lb", time: "10-15 días" },
+          especial: { rate: 8.50, unit: "lb", time: "10-15 días" }
+        },
+        maritimo: {
+          general: { rate: 42.00, unit: "ft³", time: "25-35 días" },
+          especial: { rate: 48.00, unit: "ft³", time: "25-35 días" }
+        }
+      }
+    },
+    china: {
+      Caracas: {
+        aereo: {
+          general: { rate: 25.00, unit: "kg", time: "25-35 días" },
+          especial: { rate: 28.00, unit: "kg", time: "25-35 días" }
+        },
+        maritimo: {
+          general: { rate: 850.00, unit: "CBM", time: "65-75 días" },
+          especial: { rate: 950.00, unit: "CBM", time: "65-75 días" }
+        }
+      },
+      Margarita: {
+        aereo: {
+          general: { rate: 30.00, unit: "kg", time: "30-40 días" },
+          especial: { rate: 33.00, unit: "kg", time: "30-40 días" }
+        },
+        maritimo: {
+          general: { rate: 1030.00, unit: "CBM", time: "75-90 días" },
+          especial: { rate: 1130.00, unit: "CBM", time: "75-90 días" }
+        }
+      }
+    }
+  };
+
+  const estadosVzla = ["Caracas", "Margarita"];
+
+  const handleSiguiente = () => setStep(s => s + 1);
+  const handleAtras = () => setStep(s => s - 1);
+
+  const calcular = () => {
+    const { origen, destino, modalidad, tipoCarga, peso, largo, ancho, alto, cantidad, cbmDirecto } = formData;
+    const p = parseFloat(peso) || 0;
+    const l = parseFloat(largo) || 0;
+    const a = parseFloat(ancho) || 0;
+    const h = parseFloat(alto) || 0;
+    const cant = parseFloat(cantidad) || 1;
+
+    // Si es carga prohibida, no calculamos y salimos
+    if (tipoCarga === "prohibida") return;
+
+    // CASO ESPECIAL: Aéreo Margarita (Solo manual)
+    if (destino === "Margarita" && modalidad === "aereo") {
+      setResultado({
+        total: "CONSULTAR",
+        breakdown: "Cotización requerida con asesor",
+        isManual: true,
+        volume: 0,
+        chargeBy: "Manual",
+        time: "Verificar con asesor",
+        unit: "Manual"
+      });
+      setStep(4);
+      return;
+    }
+
+    const config = TARIFAS[origen][destino][modalidad][tipoCarga];
+    let billableAmount = 0;
+    let detail = "";
+    let volumeTotal = 0;
+    let chargeBy = "physical"; // 'physical' or 'volumetric'
+
+    if (origen === "miami") {
+      if (modalidad === "aereo") {
+        const volIn3 = (l * a * h);
+        const volWeight = volIn3 > 0 ? (volIn3 / 166) : 0;
+        if (volWeight > p) {
+          chargeBy = "volumetric";
+          billableAmount = volWeight * cant;
+        } else {
+          billableAmount = p * cant;
+        }
+        detail = `${billableAmount.toFixed(2)} Lbs`;
+        volumeTotal = volIn3 / 1728; // volume in ft3 for reference
+      } else {
+        chargeBy = "volume";
+        const volFt3 = (l * a * h) / 1728;
+        billableAmount = volFt3 * cant;
+        detail = `${billableAmount.toFixed(2)} ft³`;
+        volumeTotal = volFt3;
+      }
+    } else {
+      if (modalidad === "aereo") {
+        const volCm3 = (l * a * h);
+        const volWeight = volCm3 > 0 ? (volCm3 / 5000) : 0;
+        if (volWeight > p) {
+          chargeBy = "volumetric";
+          billableAmount = volWeight * cant;
+        } else {
+          billableAmount = p * cant;
+        }
+        detail = `${billableAmount.toFixed(2)} Kg`;
+        volumeTotal = volCm3 / 1000000; // in CBM for reference
+      } else {
+        chargeBy = "volume";
+        const cbm = cbmDirecto ? parseFloat(cbmDirecto) : (l * a * h) / 1000000;
+        const cbmByWeight = p / 900; // 900kg = 1 CBM rule
+        
+        if (cbmByWeight > cbm) {
+          chargeBy = "density"; // Case for weight-based volume
+          billableAmount = cbmByWeight * cant;
+        } else {
+          billableAmount = cbm * cant;
+        }
+        
+        detail = `${billableAmount.toFixed(2)} CBM`;
+        volumeTotal = cbm;
+      }
+    }
+
+    setResultado({
+      total: (billableAmount * config.rate).toLocaleString('en-US', { minimumFractionDigits: 2 }),
+      breakdown: `${detail} × REF. ${config.rate}`,
+      volume: volumeTotal.toFixed(3),
+      chargeBy,
+      time: config.time,
+      unit: config.unit
+    });
+    setStep(4);
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div style={{ display: "grid", gap: 24 }}>
+            <div style={{ textAlign: "center" }}>
+              <label style={{ fontSize: "0.9rem", color: C.gray, marginBottom: 12, display: "block" }}>Paso 1 de 3: Selección de Ruta</label>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div
+                  onClick={() => setFormData({ ...formData, origen: "miami" })}
+                  style={{
+                    flex: 1, padding: "20px", borderRadius: 16, cursor: "pointer", border: "2px solid",
+                    borderColor: formData.origen === "miami" ? C.electric : "rgba(0,0,0,0.05)",
+                    background: formData.origen === "miami" ? "rgba(177,30,34,0.05)" : "white",
+                    transition: "0.3s"
+                  }}
+                >
+                  <img src="https://flagcdn.com/w80/us.png" style={{ width: 40, marginBottom: 10, borderRadius: 4 }} alt="USA" />
+                  <div style={{ fontWeight: 700 }}>Miami, USA</div>
+                </div>
+                <div
+                  onClick={() => setFormData({ ...formData, origen: "china" })}
+                  style={{
+                    flex: 1, padding: "20px", borderRadius: 16, cursor: "pointer", border: "2px solid",
+                    borderColor: formData.origen === "china" ? C.electric : "rgba(0,0,0,0.05)",
+                    background: formData.origen === "china" ? "rgba(177,30,34,0.05)" : "white",
+                    transition: "0.3s"
+                  }}
+                >
+                  <img src="https://flagcdn.com/w80/cn.png" style={{ width: 40, marginBottom: 10, borderRadius: 4 }} alt="China" />
+                  <div style={{ fontWeight: 700 }}>China</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize: "0.85rem", fontWeight: 600, color: C.grayLight, marginBottom: 8, display: "block" }}>Destino en Venezuela</label>
+              <select
+                value={formData.destino}
+                onChange={e => setFormData({ ...formData, destino: e.target.value })}
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(0,0,0,0.1)", background: "white" }}
+              >
+                {estadosVzla.map(e => <option key={e} value={e}>{e}</option>)}
+              </select>
+            </div>
+            <button className="btn-primary" onClick={handleSiguiente} style={{ width: "100%", padding: 14 }}>CONTINUAR</button>
+          </div>
+        );
+      case 2:
+        return (
+          <div style={{ display: "grid", gap: 24 }}>
+            <div style={{ textAlign: "center" }}>
+              <label style={{ fontSize: "0.9rem", color: C.gray, marginBottom: 12, display: "block" }}>Paso 2 de 3: Modalidad y Carga</label>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div
+                  onClick={() => setFormData({ ...formData, modalidad: "aereo" })}
+                  style={{
+                    flex: 1, padding: "20px", borderRadius: 16, cursor: "pointer", border: "2px solid",
+                    borderColor: formData.modalidad === "aereo" ? C.electric : "rgba(0,0,0,0.05)",
+                    background: formData.modalidad === "aereo" ? "rgba(177,30,34,0.05)" : "white"
+                  }}
+                >
+                  <Plane size={24} color={formData.modalidad === "aereo" ? C.electric : C.gray} style={{ marginBottom: 10 }} />
+                  <div style={{ fontWeight: 700 }}>Aéreo</div>
+                  <div style={{ fontSize: "0.7rem", color: C.gray }}>
+                    {formData.tipoCarga === "prohibida" ? "Bloqueado" : (
+                      formData.destino === "Margarita"
+                        ? "Previa cotización con asesor"
+                        : TARIFAS[formData.origen][formData.destino].aereo[formData.tipoCarga]?.time
+                    )}
+                  </div>
+                </div>
+                <div
+                  onClick={() => setFormData({ ...formData, modalidad: "maritimo" })}
+                  style={{
+                    flex: 1, padding: "20px", borderRadius: 16, cursor: "pointer", border: "2px solid",
+                    borderColor: formData.modalidad === "maritimo" ? C.electric : "rgba(0,0,0,0.05)",
+                    background: formData.modalidad === "maritimo" ? "rgba(177,30,34,0.05)" : "white"
+                  }}
+                >
+                  <Ship size={24} color={formData.modalidad === "maritimo" ? C.electric : C.gray} style={{ marginBottom: 10 }} />
+                  <div style={{ fontWeight: 700 }}>Marítimo</div>
+                  <div style={{ fontSize: "0.7rem", color: C.gray }}>
+                    {formData.tipoCarga === "prohibida" ? "Bloqueado" : TARIFAS[formData.origen][formData.destino].maritimo[formData.tipoCarga]?.time}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: "0.85rem", fontWeight: 600, color: C.grayLight, marginBottom: 8, display: "block" }}>Tipo de Carga</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                {["general", "especial"].map(t => (
+                  <button
+                    key={t}
+                    onClick={() => setFormData({ ...formData, tipoCarga: t })}
+                    style={{
+                      flex: 1, padding: "10px", borderRadius: 10, fontSize: "0.85rem", textTransform: "capitalize",
+                      border: "1px solid", cursor: "pointer",
+                      borderColor: formData.tipoCarga === t ? C.electric : "rgba(0,0,0,0.1)",
+                      background: formData.tipoCarga === t ? "rgba(177,30,34,0.05)" : "white",
+                      color: formData.tipoCarga === t ? C.electric : C.gray
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: "0.85rem", fontWeight: 600, color: C.grayLight, marginBottom: 8, display: "block" }}>Descripción del producto</label>
+              <input
+                placeholder="Ej: Repuestos, Ropa, Electrónica..."
+                value={formData.descripcion}
+                onChange={e => {
+                  const val = e.target.value.toLowerCase();
+
+                  // Diccionario de productos prohíbidos (Restricción total en Venezuela)
+                  const prohibidosKeywords = [
+                    // --- SEGURIDAD Y DEFENSA ---
+                    'dron', 'drone', 'uav', 'rpa', 'cuadricoptero', 'camara espia',
+                    'microcamara', 'lentes con camara', 'boligrafo camara',
+                    'mascara antigas', 'chaleco antibalas', 'casco tactico', 'codera', 'rodillera tactica',
+                    'puño de acero', 'manopla', 'gas pimienta', 'taser', 'electroshock',
+                    'mira telescopica', 'binoculares nocturnos', 'radio transmisor', 'walkie talkie',
+                    // --- EXPLOSIVOS Y ARMAS ---
+                    'arma', 'pistola', 'rifle', 'escopeta', 'municion', 'bala', 'balines',
+                    'aire comprimido', 'paintball', 'fuego artificial', 'pirotecnia', 'polvora',
+                    // --- RESTRICCIÓN DE VENTA Y SALUD ---
+                    'vaper', 'vapeador', 'cigarrillo electronico', 'esencia para vaper', 'e-liquid',
+                    'tabaco', 'cigarrillo', 'chimó', 'licor', 'whisky', 'ron', 'vino', 'cerveza',
+                    // --- VALORES Y OTROS ---
+                    'dinero', 'billete', 'moneda', 'joya', 'oro', 'diamante', 'lingote',
+                    'material pornografico', 'droga', 'estupefaciente', 'precursor quimico'
+                  ];
+
+                  // Diccionario de productos especiales (Prioridad Media)
+                  const especialKeywords = [
+                    // --- ROPA Y CALZADO ---
+                    'zapato', 'calzado', 'tenis', 'bota', 'sandalia', 'ropa', 'prenda', 'franela',
+                    'camisa', 'pantalon', 'jean', 'chaqueta', 'sueter', 'vestido', 'lenceria',
+                    'ropa interior', 'textil', 'tela', 'sabana', 'paño',
+                    // --- IMPLEMENTOS MÉDICOS Y PUNZANTES ---
+                    'bisturi', 'hoja de bisturi', 'aguja', 'aguja hipodermica', 'jeringa',
+                    'escalpelo', 'cateter', 'lanceta', 'instrumental quirurgico', 'termometro',
+                    'tensiometro', 'insumo medico', 'gasas', 'guantes quirurgicos',
+                    // --- ELECTRÓNICOS Y BATERÍAS ---
+                    'bateria', 'pila', 'lithium', 'litio', 'powerbank', 'laptop', 'computadora',
+                    'celular', 'telefono', 'tablet', 'ipad', 'smartwatch', 'consola', 'playstation',
+                    'xbox', 'nintendo', 'televisor', 'monitor', 'panel solar', 'inversor', 'ups',
+                    // --- CUIDADO PERSONAL Y COSMÉTICA ---
+                    'perfume', 'fragancia', 'colonia', 'aerosol', 'spray', 'esmalte', 'acetona',
+                    'alcohol', 'gel antibacterial', 'shampoo', 'crema', 'maquillaje', 'tinte',
+                    // --- SALUD, SUPLEMENTOS Y QUÍMICOS ---
+                    'medicina', 'medicamento', 'pastilla', 'jarabe', 'suplemento', 'vitamina',
+                    'proteina', 'creatina', 'limpiador', 'detergente', 'cloro', 'desinfectante',
+                    'pintura', 'solvente', 'tinner', 'aceite motor', 'lubricante',
+                    // --- REPUESTOS Y FRÁGILES ---
+                    'motor', 'compresor', 'amortiguador', 'bomba de gasolina', 'transmision',
+                    'repuesto usado', 'vidrio', 'cristal', 'ceramica', 'porcelana', 'espejo'
+                  ];
+
+                  const isProhibido = prohibidosKeywords.some(key => val.includes(key));
+                  const isSpecial = especialKeywords.some(key => val.includes(key));
+
+                  setFormData({
+                    ...formData,
+                    descripcion: e.target.value,
+                    tipoCarga: isProhibido ? "prohibida" : (isSpecial ? "especial" : "general")
+                  });
+                }}
+                style={{
+                  width: "100%", padding: "12px", borderRadius: 12,
+                  border: `1px solid ${formData.tipoCarga === "prohibida" ? "#ff4d4f" : "rgba(0,0,0,0.1)"}`,
+                  background: formData.tipoCarga === "prohibida" ? "#fff1f0" : "white"
+                }}
+              />
+
+              {formData.tipoCarga === "prohibida" && (
+                <div style={{
+                  fontSize: "0.75rem", color: "#cf1322", marginTop: 8, fontWeight: 700,
+                  display: "flex", flexDirection: "column", gap: 4, background: "#fff1f0",
+                  padding: "12px", borderRadius: 8, border: "1px solid #ff4d4f"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <X size={14} /> 🚫 MERCANCÍA PROHIBIDA DETECTADA
+                  </div>
+                  <div style={{ fontWeight: 400, color: "#820014" }}>
+                    Este artículo no cumple con las políticas de transporte o leyes internacionales. No podemos procesar este envío.
+                  </div>
+                </div>
+              )}
+
+              {formData.tipoCarga === "especial" && (
+                <div style={{
+                  fontSize: "0.75rem", color: "#B11E22", marginTop: 8, fontWeight: 700,
+                  display: "flex", alignItems: "center", gap: 6, background: "rgba(177,30,34,0.05)",
+                  padding: "8px 12px", borderRadius: 8, border: "1px solid rgba(177,30,34,0.1)"
+                }}>
+                  <BarChart3 size={12} /> ✨ Tarifa Especial Detectada (Electrónica/Líquidos/Valor)
+                </div>
+              )}
+            </div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button className="btn-secondary" onClick={handleAtras} style={{ flex: 1, padding: 14 }}>ATRÁS</button>
+              <button className="btn-primary" onClick={handleSiguiente} style={{ flex: 1, padding: 14 }}>CONTINUAR</button>
+            </div>
+          </div>
+        );
+      case 3:
+        const isMaritimo = formData.modalidad === "maritimo";
+        return (
+          <div style={{ display: "grid", gap: 16 }}>
+            <label style={{ fontSize: "0.9rem", color: C.gray, textAlign: "center", display: "block" }}>Paso 3 de 3: Detalles de la Carga</label>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div>
+                <label style={{ fontSize: "0.8rem", color: C.gray }}>Cantidad de Bultos</label>
+                <input type="number" min="1" value={formData.cantidad} onChange={e => setFormData({ ...formData, cantidad: e.target.value })} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "0.8rem", color: C.gray }}>Peso Real ({formData.origen === "miami" ? "Lbs" : "Kg"})</label>
+                <input type="number" value={formData.peso} onChange={e => setFormData({ ...formData, peso: e.target.value })} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd" }} />
+              </div>
+            </div>
+
+            {/* Si NO hay un volumen directo ingresado, mostramos las medidas individuales */}
+            {!formData.cbmDirecto && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: "0.8rem", color: C.gray }}>Largo ({formData.origen === "miami" ? "in" : "cm"})</label>
+                  <input type="number" value={formData.largo} onChange={e => setFormData({ ...formData, largo: e.target.value })} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: "0.8rem", color: C.gray }}>Ancho ({formData.origen === "miami" ? "in" : "cm"})</label>
+                  <input type="number" value={formData.ancho} onChange={e => setFormData({ ...formData, ancho: e.target.value })} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: "0.8rem", color: C.gray }}>Alto ({formData.origen === "miami" ? "in" : "cm"})</label>
+                  <input type="number" value={formData.alto} onChange={e => setFormData({ ...formData, alto: e.target.value })} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd" }} />
+                </div>
+              </div>
+            )}
+
+            {isMaritimo && (
+              <div style={{ 
+                marginTop: 8, padding: 16, borderRadius: 12, 
+                border: "2px dashed #ddd", background: formData.cbmDirecto ? "rgba(177,30,34,0.02)" : "transparent" 
+              }}>
+                <label style={{ fontSize: "0.8rem", color: C.gray, display: "block", marginBottom: 8, textAlign: "center" }}>
+                  {formData.origen === "miami" ? "O ingrese Pies Cúbicos (ft³) Totales" : "O ingrese Metros Cúbicos (CBM) Totales"}
+                </label>
+                <input 
+                  type="number" 
+                  step="0.01" 
+                  value={formData.cbmDirecto} 
+                  onChange={e => setFormData({ ...formData, cbmDirecto: e.target.value })} 
+                  placeholder={formData.origen === "miami" ? "Ej: 5.2" : "Ej: 0.15"}
+                  style={{ 
+                    width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd", 
+                    fontSize: "1rem", textAlign: "center", background: "white" 
+                  }} 
+                />
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+              <button className="btn-secondary" onClick={handleAtras} style={{ flex: 1, padding: 14 }}>ATRÁS</button>
+              <button className="btn-primary" onClick={calcular} style={{ flex: 1, padding: 14 }}>CALCULAR</button>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div style={{ textAlign: "center" }}>
+            <div style={{
+              background: resultado.isManual ? "linear-gradient(135deg, #128C7E, #25D366)" : "linear-gradient(135deg, #B11E22, #d96568)",
+              padding: "40px 20px", borderRadius: 24, color: "white", marginBottom: 24,
+              boxShadow: resultado.isManual ? "0 15px 35px rgba(37,211,102,0.3)" : "0 15px 35px rgba(177,30,34,0.3)"
+            }}>
+              <div style={{ fontSize: "0.9rem", opacity: 0.9, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>
+                {resultado.isManual ? "Requerido" : "Costo Referencial"}
+              </div>
+              <div style={{ fontSize: "3rem", fontWeight: 800 }}>
+                {resultado.isManual ? "" : "$"}{resultado.total}
+              </div>
+              <div style={{ fontSize: "1rem", marginTop: 8, opacity: 0.9 }}>{resultado.breakdown}</div>
+            </div>
+
+            <div style={{ display: "grid", gap: 12, textAlign: "left", padding: "0 10px", marginBottom: 24 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #eee" }}>
+                <span style={{ color: C.gray }}>Ruta:</span>
+                <span style={{ fontWeight: 600 }}>{formData.origen.toUpperCase()} ➔ {formData.destino}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #eee" }}>
+                <span style={{ color: C.gray }}>Medidas:</span>
+                <span style={{ fontWeight: 600 }}>{formData.largo}x{formData.ancho}x{formData.alto} {formData.origen === "miami" ? "in" : "cm"}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #eee" }}>
+                <span style={{ color: C.gray }}>Volumen Total:</span>
+                <span style={{ fontWeight: 600 }}>{resultado.volume} {formData.origen === "miami" ? "ft³" : "CBM"}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #eee" }}>
+                <span style={{ color: C.gray }}>Peso Físico:</span>
+                <span style={{ fontWeight: 600 }}>{formData.peso} {formData.origen === "miami" ? "Lbs" : "Kg"}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #eee" }}>
+                <span style={{ color: C.gray }}>Base del Cobro:</span>
+                <span style={{ 
+                  fontWeight: 700, 
+                  color: (resultado.chargeBy === "volumetric" || resultado.chargeBy === "volume" || resultado.chargeBy === "density") ? "#B11E22" : C.electric 
+                }}>
+                  {resultado.chargeBy === "volumetric" ? "Peso Volumétrico" : (resultado.chargeBy === "volume" ? "Volumen" : (resultado.chargeBy === "density" ? "CBM (Exceso Peso)" : "Peso Físico"))}
+                </span>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => {
+                const msg = `Hola TAM Cargo, deseo gestionar esta cotización:
+📦 ORIGEN: ${formData.origen.toUpperCase()}
+📍 DESTINO: ${formData.destino.toUpperCase()}
+🚢 MODALIDAD: ${formData.modalidad.toUpperCase()} (${formData.tipoCarga.toUpperCase()})
+🏷️ PRODUCTO: ${formData.descripcion}
+📏 MEDIDAS: ${formData.largo}x${formData.ancho}x${formData.alto} ${formData.origen === "miami" ? "in" : "cm"}
+📦 VOLUMEN: ${resultado.volume} ${formData.origen === "miami" ? "ft³" : "CBM"}
+⚖️ PESO: ${formData.peso} ${formData.origen === "miami" ? "Lbs" : "Kg"}
+📉 COBRADO POR: ${resultado.chargeBy === "density" ? "CBM (EXCESO PESO)" : resultado.chargeBy.toUpperCase()}
+💰 COSTO REF: ${resultado.total === "CONSULTAR" ? "POR DEFINIR" : "$" + resultado.total}`;
+                window.open(`https://wa.me/584123580995?text=${encodeURIComponent(msg)}`, "_blank");
+              }}
+              style={{ 
+                width: "100%", padding: 18, borderRadius: 16, border: "none",
+                background: "#25D366", color: "white", fontWeight: 700, cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                boxShadow: "0 10px 20px rgba(37,211,102,0.2)", fontSize: "1rem"
+              }}
+            >
+              CONFIRMAR ENVÍO CON ASESOR
+            </button>
+
+            <button className="btn-primary" onClick={() => setStep(1)} 
+              style={{ width: "100%", marginTop: 12, padding: 14, background: "none", color: C.gray, border: "1px solid #eee" }}>
+              NUEVO CÁLCULO
+            </button>
+          </div>
+        );
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-card grad-border" onClick={e => e.stopPropagation()}
+        style={{ maxWidth: 500, width: "100%", padding: "40px", overflowY: "auto", maxHeight: "90vh", borderRadius: 24 }}>
+        <button onClick={onClose} style={{
+          position: "absolute", top: 20, right: 20, background: "none", border: "none",
+          color: C.gray, cursor: "pointer"
+        }}><X size={20} /></button>
+
+        {step < 4 && (
+          <div style={{ marginBottom: 30 }}>
+            <div style={{ display: "flex", gap: 4, height: 4, background: "#eee", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ width: `${(step / 3) * 100}%`, background: C.electric, transition: "0.3s" }} />
+            </div>
+          </div>
+        )}
+
+        {renderStep()}
       </div>
     </div>
   );
@@ -1055,14 +1605,14 @@ function Hero({ onTrack }) {
    COMPONENT: Services
 ───────────────────────────────────────── */
 const services = [
-    {
+  {
     icon: FileCheck,
     title: "Módulo de compras",
     color: "#B11E22",
     desc: "Asesoría en la compra de productos chinos, desde la selección hasta la recepción en nuestro almacén.",
-    features: ["Pago a proveedores", "Búsqueda de proveedores", "Manejo de ordenes","Verificación de proveedores"],
+    features: ["Pago a proveedores", "Búsqueda de proveedores", "Manejo de ordenes", "Verificación de proveedores"],
   },
-    {
+  {
     icon: Ship,
     title: "Consolidación de Carga",
     color: "#B11E22",
@@ -1076,12 +1626,12 @@ const services = [
     desc: "Transporte de contenedores FCL y LCL (consolidados). Salidas constantes hacia puertos venezolanos e internacionales con seguimiento completo.",
     features: ["Contenedores FCL / LCL", "Consolidados recurrentes", "Permisos de exportación"],
   },
-    {
+  {
     icon: Plane,
     title: "Carga Aérea",
     color: "#B11E22",
     desc: "Transporte de carga aérea internacional. Salidas constantes hacia destinos globales con seguimiento completo.",
-    features: ["Vuelos recurrentes", "Seguimiento en tiempo real", "Manejo de documentación","Solo disponible carga comercial"],
+    features: ["Vuelos recurrentes", "Seguimiento en tiempo real", "Manejo de documentación", "Solo disponible carga comercial"],
   },
   {
     icon: FileCheck,
@@ -1419,7 +1969,7 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
               Transporte marítimo, aéreo y soluciones logísticas integrales. Tu socio confiable en comercio internacional.
             </p>
             <div style={{ display: "flex", gap: 10 }}>
-              {[ Instagram].map((Icon, i) => (
+              {[Instagram].map((Icon, i) => (
                 <a key={i} href="https://www.instagram.com/tamcargoglobal/" target="_blank" rel="noreferrer" style={{
                   width: 34, height: 34,
                   background: "rgba(177,30,34,0.08)",
@@ -1508,12 +2058,13 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showFreightModal, setShowFreightModal] = useState(false);
 
   return (
     <>
       <style>{globalStyles}</style>
 
-      <Navbar onTrack={() => setShowModal(true)} />
+      <Navbar onTrack={() => setShowModal(true)} onFreight={() => setShowFreightModal(true)} />
 
       <main>
         <Hero onTrack={() => setShowModal(true)} />
@@ -1543,6 +2094,7 @@ export default function App() {
       {showModal && <TrackingModal onClose={() => setShowModal(false)} />}
       {showPrivacyModal && <PrivacyPolicyModal onClose={() => setShowPrivacyModal(false)} />}
       {showTermsModal && <TermsOfServiceModal onClose={() => setShowTermsModal(false)} />}
+      {showFreightModal && <FreightCalculatorModal onClose={() => setShowFreightModal(false)} />}
     </>
   );
 }
