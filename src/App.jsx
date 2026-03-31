@@ -281,6 +281,26 @@ const globalStyles = `
   }
   .btn-outline:hover { background: rgba(217,101,104,0.1); transform: translateY(-1px); }
 
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: transparent;
+    color: var(--gray);
+    border: 1px solid #eee;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    white-space: nowrap;
+    justify-content: center;
+  }
+  .btn-secondary:hover { background: #f9f9f9; border-color: #ddd; }
+
   .hero-badge {
     max-width: 100%;
   }
@@ -657,7 +677,10 @@ function FreightCalculatorModal({ onClose }) {
       return;
     }
 
-    const config = TARIFAS[origen][destino][modalidad][tipoCarga];
+    const isChinaMaritimo = (origen === "china" && modalidad === "maritimo");
+    const effectiveTipoCarga = (tipoCarga === "especial" && !isChinaMaritimo) ? "general" : tipoCarga;
+
+    const config = TARIFAS[origen][destino][modalidad][effectiveTipoCarga];
     let billableAmount = 0;
     let detail = "";
     let volumeTotal = 0;
@@ -698,14 +721,14 @@ function FreightCalculatorModal({ onClose }) {
         chargeBy = "volume";
         const cbm = cbmDirecto ? parseFloat(cbmDirecto) : (l * a * h) / 1000000;
         const cbmByWeight = p / 900; // 900kg = 1 CBM rule
-        
+
         if (cbmByWeight > cbm) {
           chargeBy = "density"; // Case for weight-based volume
           billableAmount = cbmByWeight * cant;
         } else {
           billableAmount = cbm * cant;
         }
-        
+
         detail = `${billableAmount.toFixed(2)} CBM`;
         volumeTotal = cbm;
       }
@@ -719,6 +742,21 @@ function FreightCalculatorModal({ onClose }) {
       time: config.time,
       unit: config.unit
     });
+
+    // Validar límite de 8 CBM solicitado por el usuario
+    const totalShipmentCBM = (origen === "miami") ? (volumeTotal * cant * 0.028317) : (volumeTotal * cant);
+    if (totalShipmentCBM > 7.9) {
+      setResultado({
+        total: "CONSULTA CON ASESOR",
+        breakdown: "Carga de gran volumen (> 8 CBM)",
+        isManual: true,
+        volume: (volumeTotal * cant).toFixed(3),
+        chargeBy: "Manual",
+        time: "Sujeto a cotización",
+        unit: "CBM"
+      });
+    }
+
     setStep(4);
   };
 
@@ -766,7 +804,10 @@ function FreightCalculatorModal({ onClose }) {
                 {estadosVzla.map(e => <option key={e} value={e}>{e}</option>)}
               </select>
             </div>
-            <button className="btn-primary" onClick={handleSiguiente} style={{ width: "100%", padding: 14 }}>CONTINUAR</button>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button className="btn-secondary" onClick={onClose} style={{ flex: 1, padding: 14 }}>CANCELAR</button>
+              <button className="btn-primary" onClick={handleSiguiente} style={{ flex: 1, padding: 14 }}>CONTINUAR</button>
+            </div>
           </div>
         );
       case 2:
@@ -852,7 +893,7 @@ function FreightCalculatorModal({ onClose }) {
                     'aire comprimido', 'paintball', 'fuego artificial', 'pirotecnia', 'polvora',
                     // --- RESTRICCIÓN DE VENTA Y SALUD ---
                     'vaper', 'vapeador', 'cigarrillo electronico', 'esencia para vaper', 'e-liquid',
-                    'tabaco', 'cigarrillo', 'chimó', 'licor', 'whisky', 'ron', 'vino', 'cerveza',
+                    'tabaco', 'cigarrillo', 'chimó', 'licor', 'whisky', 'vino', 'cerveza',
                     // --- VALORES Y OTROS ---
                     'dinero', 'billete', 'moneda', 'joya', 'oro', 'diamante', 'lingote',
                     'material pornografico', 'droga', 'estupefaciente', 'precursor quimico'
@@ -915,7 +956,7 @@ function FreightCalculatorModal({ onClose }) {
                 </div>
               )}
 
-              {formData.tipoCarga === "especial" && (
+              {formData.tipoCarga === "especial" && formData.origen === "china" && formData.modalidad === "maritimo" && (
                 <div style={{
                   fontSize: "0.75rem", color: "#B11E22", marginTop: 8, fontWeight: 700,
                   display: "flex", alignItems: "center", gap: 6, background: "rgba(177,30,34,0.05)",
@@ -967,23 +1008,23 @@ function FreightCalculatorModal({ onClose }) {
             )}
 
             {isMaritimo && (
-              <div style={{ 
-                marginTop: 8, padding: 16, borderRadius: 12, 
-                border: "2px dashed #ddd", background: formData.cbmDirecto ? "rgba(177,30,34,0.02)" : "transparent" 
+              <div style={{
+                marginTop: 8, padding: 16, borderRadius: 12,
+                border: "2px dashed #ddd", background: formData.cbmDirecto ? "rgba(177,30,34,0.02)" : "transparent"
               }}>
                 <label style={{ fontSize: "0.8rem", color: C.gray, display: "block", marginBottom: 8, textAlign: "center" }}>
                   {formData.origen === "miami" ? "O ingrese Pies Cúbicos (ft³) Totales" : "O ingrese Metros Cúbicos (CBM) Totales"}
                 </label>
-                <input 
-                  type="number" 
-                  step="0.01" 
-                  value={formData.cbmDirecto} 
-                  onChange={e => setFormData({ ...formData, cbmDirecto: e.target.value })} 
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.cbmDirecto}
+                  onChange={e => setFormData({ ...formData, cbmDirecto: e.target.value })}
                   placeholder={formData.origen === "miami" ? "Ej: 5.2" : "Ej: 0.15"}
-                  style={{ 
-                    width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd", 
-                    fontSize: "1rem", textAlign: "center", background: "white" 
-                  }} 
+                  style={{
+                    width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #ddd",
+                    fontSize: "1rem", textAlign: "center", background: "white"
+                  }}
                 />
               </div>
             )}
@@ -1005,7 +1046,7 @@ function FreightCalculatorModal({ onClose }) {
               <div style={{ fontSize: "0.9rem", opacity: 0.9, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>
                 {resultado.isManual ? "Requerido" : "Costo Referencial"}
               </div>
-              <div style={{ fontSize: "3rem", fontWeight: 800 }}>
+              <div style={{ fontSize: resultado.isManual ? "1.6rem" : "3rem", fontWeight: 800 }}>
                 {resultado.isManual ? "" : "$"}{resultado.total}
               </div>
               <div style={{ fontSize: "1rem", marginTop: 8, opacity: 0.9 }}>{resultado.breakdown}</div>
@@ -1030,30 +1071,32 @@ function FreightCalculatorModal({ onClose }) {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #eee" }}>
                 <span style={{ color: C.gray }}>Base del Cobro:</span>
-                <span style={{ 
-                  fontWeight: 700, 
-                  color: (resultado.chargeBy === "volumetric" || resultado.chargeBy === "volume" || resultado.chargeBy === "density") ? "#B11E22" : C.electric 
+                <span style={{
+                  fontWeight: 700,
+                  color: (resultado.chargeBy === "volumetric" || resultado.chargeBy === "volume" || resultado.chargeBy === "density") ? "#B11E22" : C.electric
                 }}>
                   {resultado.chargeBy === "volumetric" ? "Peso Volumétrico" : (resultado.chargeBy === "volume" ? "Volumen" : (resultado.chargeBy === "density" ? "CBM (Exceso Peso)" : "Peso Físico"))}
                 </span>
               </div>
             </div>
 
-            <button 
+            <button
               onClick={() => {
+                const isChinaMaritimo = (formData.origen === "china" && formData.modalidad === "maritimo");
+                const appliedType = (formData.tipoCarga === "especial" && !isChinaMaritimo) ? "GENERAL" : formData.tipoCarga.toUpperCase();
                 const msg = `Hola TAM Cargo, deseo gestionar esta cotización:
 📦 ORIGEN: ${formData.origen.toUpperCase()}
 📍 DESTINO: ${formData.destino.toUpperCase()}
-🚢 MODALIDAD: ${formData.modalidad.toUpperCase()} (${formData.tipoCarga.toUpperCase()})
+🚢 MODALIDAD: ${formData.modalidad.toUpperCase()} (${appliedType})
 🏷️ PRODUCTO: ${formData.descripcion}
 📏 MEDIDAS: ${formData.largo}x${formData.ancho}x${formData.alto} ${formData.origen === "miami" ? "in" : "cm"}
 📦 VOLUMEN: ${resultado.volume} ${formData.origen === "miami" ? "ft³" : "CBM"}
 ⚖️ PESO: ${formData.peso} ${formData.origen === "miami" ? "Lbs" : "Kg"}
 📉 COBRADO POR: ${resultado.chargeBy === "density" ? "CBM (EXCESO PESO)" : resultado.chargeBy.toUpperCase()}
-💰 COSTO REF: ${resultado.total === "CONSULTAR" ? "POR DEFINIR" : "$" + resultado.total}`;
+💰 COSTO REF: ${resultado.isManual ? "POR DEFINIR (Consultar Asesor)" : "$" + resultado.total}`;
                 window.open(`https://wa.me/584123580995?text=${encodeURIComponent(msg)}`, "_blank");
               }}
-              style={{ 
+              style={{
                 width: "100%", padding: 18, borderRadius: 16, border: "none",
                 background: "#25D366", color: "white", fontWeight: 700, cursor: "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
@@ -1063,10 +1106,13 @@ function FreightCalculatorModal({ onClose }) {
               CONFIRMAR ENVÍO CON ASESOR
             </button>
 
-            <button className="btn-primary" onClick={() => setStep(1)} 
-              style={{ width: "100%", marginTop: 12, padding: 14, background: "none", color: C.gray, border: "1px solid #eee" }}>
-              NUEVO CÁLCULO
-            </button>
+            <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+              <button className="btn-secondary" onClick={() => setStep(3)} style={{ flex: 1, padding: 14 }}>ATRÁS</button>
+              <button className="btn-primary" onClick={() => setStep(1)}
+                style={{ flex: 1, padding: 14, background: "none", color: C.gray, border: "1px solid #eee" }}>
+                NUEVO CÁLCULO
+              </button>
+            </div>
           </div>
         );
       default: return null;
