@@ -1,7 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -23,7 +24,7 @@ app.get('/api/health', (req, res) => {
     res.json({ status: "ok", service: "TAM Cargo API" });
 });
 
-// Endpoint para enviar correos de ingreso de carga (mercurio recibida)
+// Endpoint para enviar correos de ingreso de carga
 app.post('/api/send-receipt', async (req, res) => {
     const { to, clientName, shippingMarks, description, pieces, weight, volume, tracking } = req.body;
 
@@ -59,21 +60,6 @@ app.post('/api/send-receipt', async (req, res) => {
                             <td style="padding: 8px 0; color: #B11E22; font-weight: 600; text-align: right;">${tracking || 'No especificado'}</td>
                         </tr>
                     </table>
-                    
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between;">
-                        <div style="text-align: center; flex: 1;">
-                            <div style="font-size: 11px; color: #6b7280; text-transform: uppercase;">Piezas</div>
-                            <div style="font-size: 16px; font-weight: 800; color: #111827;">${pieces || 1}</div>
-                        </div>
-                        <div style="text-align: center; flex: 1; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;">
-                            <div style="font-size: 11px; color: #6b7280; text-transform: uppercase;">Peso</div>
-                            <div style="font-size: 16px; font-weight: 800; color: #111827;">${weight || 0} Kg</div>
-                        </div>
-                        <div style="text-align: center; flex: 1;">
-                            <div style="font-size: 11px; color: #6b7280; text-transform: uppercase;">Volumen</div>
-                            <div style="font-size: 16px; font-weight: 800; color: #111827;">${volume || 0} CBM</div>
-                        </div>
-                    </div>
                 </div>
                 
                 <p style="font-size: 14px; line-height: 1.5; color: #4b5563;">
@@ -120,7 +106,7 @@ app.post('/api/send-email', async (req, res) => {
                     <p style="margin: 15px 0 5px 0; font-size: 0.8em; color: #666;"><strong>🏷️ Marcas de Embarque:</strong> ${shippingMarks || 'N/A'}</p>
                 </div>
                 <p>Para ver el estatus sin tener que copiar el código, haga clic aquí:</p>
-                <a href="${req.headers.origin || 'https://tam-cargo.com'}/?t=${trackingId}" 
+                <a href="https://tam-cargo.com/?t=${trackingId}" 
                    style="display: inline-block; background: #B11E22; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                    VER ESTATUS DEL ENVÍO
                 </a>
@@ -142,7 +128,7 @@ app.post('/api/send-email', async (req, res) => {
 });
 
 // Para despliegue en Vercel como Serverless Function
-module.exports = app;
+export default app;
 
 const PORT = process.env.PORT || 3001;
 if (process.env.NODE_ENV !== 'production') {
