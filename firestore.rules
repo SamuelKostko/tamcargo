@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Reglas para la colección tracking (códigos de cliente)
+    match /tracking/{trackingId} {
+      allow get: if true;
+      allow list: if false;
+      allow write: if false;
+    }
+
+    // Reglas para la colección containers (datos maestros del envío)
+    match /containers/{containerId} {
+      // Permitir leer si el cliente conoce el ID del contenedor 
+      // (el hook lo obtiene automáticamente del tracking)
+      allow get: if true;
+      allow list: if false;
+      allow write: if false;
+    }
+    
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

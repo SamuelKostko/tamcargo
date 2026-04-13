@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect, useRef } from "react";
+import { Routes, Route } from "react-router-dom";
 import {
   Anchor, Plane, Truck, FileCheck, MapPin, Phone, Mail,
   ArrowRight, Search, X, ChevronDown, Globe, Shield,
@@ -15,6 +16,9 @@ import {
 import tamCargoLogo from "./assets/TAM CARGO.png";
 import tamFondo from "./assets/TAM.png";
 import heroImage from "./assets/hero.png";
+import TrackingVisualizer from "./components/TrackingVisualizer";
+import AdminDashboard from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
 
 /* ─────────────────────────────────────────
    DESIGN TOKENS  (mirrors tailwind.config)
@@ -154,25 +158,27 @@ const globalStyles = `
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(177,30,34,0.14);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px;
-    animation: fadeIn 0.25s ease;
+    padding: 24px;
+    animation: fadeIn 0.3s ease-out;
   }
 
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(217,101,104,0.3); }
-    50% { box-shadow: 0 0 0 12px rgba(217,101,104,0); }
+  @keyframes slideUp { 
+    from { opacity: 0; transform: translateY(40px) scale(0.95); } 
+    to { opacity: 1; transform: translateY(0) scale(1); } 
   }
 
-  .modal-card { animation: slideUp 0.35s ease; }
-  .pulse-glow { animation: pulse-glow 2.5s infinite; }
+  .modal-card { 
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.7);
+  }
 
   /* Nav link underline effect */
   .nav-link {
@@ -350,14 +356,19 @@ const globalStyles = `
 
     .hero-search-form {
       flex-direction: column;
-      border-radius: 12px;
-      overflow: hidden;
+      background: rgba(177,30,34,0.15) !important;
+      border-radius: 16px !important;
+    }
+
+    .hero-search-form .input-wrapper {
+      width: 100%;
+      border-bottom: 1px solid rgba(217,101,104,0.2);
     }
 
     .hero-search-form button {
-      justify-content: center;
-      width: 100%;
-      min-height: 48px;
+      width: 100% !important;
+      padding: 16px !important;
+      border-radius: 0 0 16px 16px !important;
     }
 
     .hero-badge {
@@ -526,55 +537,110 @@ function Navbar({ onTrack, onFreight }) {
 /* ─────────────────────────────────────────
    COMPONENT: TrackingModal
 ───────────────────────────────────────── */
-function TrackingModal({ onClose }) {
+function TrackingModal({ onClose, initialId = "" }) {
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-card grad-border" onClick={e => e.stopPropagation()}
-        style={{ maxWidth: 480, width: "100%", padding: "48px 40px", textAlign: "center", position: "relative" }}>
-        <button onClick={onClose} style={{
-          position: "absolute", top: 16, right: 16, background: "none", border: "none",
-          color: C.gray, cursor: "pointer"
-        }}><X size={18} /></button>
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0,
+        background: "rgba(0,0,0,0.55)",
+        backdropFilter: "blur(8px)",
+        zIndex: 9999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px"
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          maxWidth: 860,
+          width: "100%",
+          maxHeight: "92vh",
+          background: "#ffffff",
+          borderRadius: "20px",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.25)",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          position: "relative"
+        }}
+      >
+        {/* Botón X — absoluto esquina superior derecha */}
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: "16px",
+            right: "16px",
+            width: "36px",
+            height: "36px",
+            borderRadius: "50%",
+            border: "1px solid #e5e7eb",
+            background: "#f9fafb",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#6b7280",
+            zIndex: 10,
+            transition: "background 0.2s"
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = "#f3f4f6"; e.currentTarget.style.color = "#111"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "#f9fafb"; e.currentTarget.style.color = "#6b7280"; }}
+        >
+          <X size={18} />
+        </button>
 
+        {/* Header con franja de color */}
         <div style={{
-          width: 64, height: 64, borderRadius: 16,
-          background: "linear-gradient(135deg, rgba(177,30,34,0.2), rgba(217,101,104,0.2))",
-          border: "1.5px solid rgba(217,101,104,0.3)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          margin: "0 auto 24px",
+          padding: "28px 32px 20px",
+          borderBottom: "1px solid #e5e7eb",
+          display: "flex",
+          alignItems: "center",
+          gap: "14px"
         }}>
-          <Package size={28} color={C.cyan} />
+          <div style={{
+            width: "42px", height: "42px",
+            background: "#B11E22",
+            borderRadius: "12px",
+            display: "flex", alignItems: "center", justifyContent: "center"
+          }}>
+            <Package size={22} color="white" />
+          </div>
+          <div>
+            <h2 style={{ margin: 0, fontSize: "1.3rem", fontWeight: 800, color: "#111827", lineHeight: 1.2 }}>
+              Rastreo de Carga
+            </h2>
+            <p style={{ margin: 0, fontSize: "0.75rem", color: "#9ca3af", marginTop: "2px" }}>
+              Seguimiento en tiempo real · TAM Cargo
+            </p>
+          </div>
         </div>
 
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 6,
-          background: "rgba(217,101,104,0.1)", border: "1px solid rgba(217,101,104,0.25)",
-          borderRadius: 20, padding: "4px 14px", marginBottom: 20,
-        }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.cyan, display: "block" }} />
-          <span style={{ fontSize: "0.72rem", color: C.cyan, fontFamily: "var(--font-mono)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            En desarrollo
-          </span>
-        </div>
+        {/* Contenido scrollable */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "24px 32px" }}>
+          <TrackingVisualizer initialId={initialId} />
 
-        <h3 style={{ fontSize: "1.35rem", fontWeight: 700, marginBottom: 12, lineHeight: 1.3 }}>
-          Módulo de Tracking <br />en Actualización
-        </h3>
-        <p style={{ color: C.gray, fontSize: "0.9rem", lineHeight: 1.65, marginBottom: 28 }}>
-          Muy pronto podrás rastrear tus contenedores y envíos en <strong style={{ color: C.cyanLight }}>tiempo real</strong>.
-          Estamos construyendo una plataforma de seguimiento de última generación para darte visibilidad total de tu carga.
-        </p>
-        <p style={{ color: C.grayLight, fontSize: "0.82rem", marginBottom: 28 }}>
-          Mientras tanto, contacta a nuestro equipo para obtener actualizaciones de tu envío.
-        </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="https://wa.me/+584123580995" className="btn-primary"
-            style={{ background: "linear-gradient(135deg, #25d366, #128c7e)", fontSize: "0.85rem", padding: "10px 20px" }}>
-            <MessageCircle size={15} /> WhatsApp
-          </a>
-          <button onClick={onClose} className="btn-outline" style={{ fontSize: "0.85rem", padding: "10px 20px" }}>
-            Cerrar
-          </button>
+          {/* Footer ayuda */}
+          <div style={{ marginTop: "28px", paddingTop: "20px", borderTop: "1px solid #e5e7eb", textAlign: "center" }}>
+            <p style={{ margin: "0 0 12px", fontSize: "0.8rem", color: "#9ca3af" }}>¿Necesita asistencia personalizada?</p>
+            <a
+              href="https://wa.me/+584123580995"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "10px",
+                padding: "12px 28px",
+                background: "#25D366", color: "white",
+                borderRadius: "12px", fontWeight: 700,
+                textDecoration: "none", fontSize: "0.9rem",
+                boxShadow: "0 4px 14px rgba(37,211,102,0.3)"
+              }}
+            >
+              <MessageCircle size={18} /> Contactar con Soporte
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -1462,7 +1528,7 @@ function Hero({ onTrack }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    onTrack();
+    onTrack(query);
   };
 
   return (
@@ -1578,32 +1644,38 @@ function Hero({ onTrack }) {
           borderRadius: 12,
           overflow: "hidden",
           margin: "0 auto 20px",
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(12px)",
           animation: "slideUp 0.7s 0.3s ease both",
+          display: 'flex',
         }}>
-          <Search size={18} color="rgba(255,255,255,0.9)" style={{ margin: "auto 16px", flexShrink: 0 }} />
-          <input
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Ingresa tu número de seguimiento..."
-            style={{
-              flex: 1, background: "transparent", border: "none", outline: "none",
-              color: "white", fontFamily: "var(--font-sans)", fontSize: "0.9rem",
-              padding: "14px 8px",
-            }}
-            onFocus={e => e.target.placeholder = ""}
-            onBlur={e => e.target.placeholder = "Ingresa tu número de seguimiento..."}
-          />
+          <div className="input-wrapper" style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+            <Search size={18} color="rgba(255,255,255,0.9)" style={{ marginLeft: '16px', flexShrink: 0 }} />
+            <input
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Ingresa tu número de seguimiento..."
+              style={{
+                flex: 1, background: "transparent", border: "none", outline: "none",
+                color: "white", fontFamily: "var(--font-sans)", fontSize: "0.95rem",
+                padding: "16px 12px",
+              }}
+              onFocus={e => e.target.placeholder = ""}
+              onBlur={e => e.target.placeholder = "Ingresa tu número de seguimiento..."}
+            />
+          </div>
           <button type="submit" style={{
-            padding: "0 24px",
+            padding: "0 28px",
             background: "linear-gradient(135deg, #B11E22, #d96568)",
             color: "white", border: "none", cursor: "pointer",
-            fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.88rem",
-            display: "flex", alignItems: "center", gap: 6,
-            transition: "opacity 0.2s",
-          }}>
-            Rastrear <ArrowRight size={14} />
+            fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem",
+            display: "flex", alignItems: "center", justifyContent: 'center', gap: 8,
+            transition: "all 0.2s",
+          }}
+            onMouseOver={e => e.currentTarget.style.opacity = 0.9}
+            onMouseOut={e => e.currentTarget.style.opacity = 1}
+          >
+            Rastrear <ArrowRight size={16} />
           </button>
         </form>
 
@@ -2086,7 +2158,12 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
           <span style={{ color: C.gray, fontSize: "0.8rem" }}>© 2026 TAM Cargo Logistics. Todos los derechos reservados.</span>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <Wind size={12} color={C.electric} />
+            <div 
+              onClick={() => window.location.href='/login'} 
+              style={{ cursor: 'default', display: 'flex', alignItems: 'center' }}
+            >
+              <Wind size={12} color={C.electric} />
+            </div>
             <span style={{ color: C.gray, fontSize: "0.78rem", fontFamily: "var(--font-mono)" }}>
               Desarrollado por KostkoDeveloper
             </span>
@@ -2098,22 +2175,36 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
 }
 
 /* ─────────────────────────────────────────
-   ROOT APP
+   LANDING PAGE COMPONENT
 ───────────────────────────────────────── */
-export default function App() {
+function LandingPage() {
   const [showModal, setShowModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showFreightModal, setShowFreightModal] = useState(false);
+  const [initialTrackingId, setInitialTrackingId] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get('t');
+    if (t) {
+      handleOpenTracking(t);
+    }
+  }, []);
+
+  const handleOpenTracking = (id = "") => {
+    setInitialTrackingId(typeof id === 'string' ? id : "");
+    setShowModal(true);
+  };
 
   return (
     <>
       <style>{globalStyles}</style>
 
-      <Navbar onTrack={() => setShowModal(true)} onFreight={() => setShowFreightModal(true)} />
+      <Navbar onTrack={() => handleOpenTracking()} onFreight={() => setShowFreightModal(true)} />
 
       <main>
-        <Hero onTrack={() => setShowModal(true)} />
+        <Hero onTrack={(id) => handleOpenTracking(id)} />
         <Services />
         <Trust />
         <About />
@@ -2137,11 +2228,24 @@ export default function App() {
       </a>
 
       {/* Tracking modal */}
-      {showModal && <TrackingModal onClose={() => setShowModal(false)} />}
+      {showModal && <TrackingModal onClose={() => setShowModal(false)} initialId={initialTrackingId} />}
       {showPrivacyModal && <PrivacyPolicyModal onClose={() => setShowPrivacyModal(false)} />}
       {showTermsModal && <TermsOfServiceModal onClose={() => setShowTermsModal(false)} />}
       {showFreightModal && <FreightCalculatorModal onClose={() => setShowFreightModal(false)} />}
     </>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MAIN ROUTER
+───────────────────────────────────────── */
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/login" element={<AdminLogin />} />
+    </Routes>
   );
 }
 
