@@ -310,7 +310,7 @@ const AdminDashboard = () => {
       // Send Receipt Email
       if (email && email.trim() && !currentReceipt) {
         try {
-          await fetch('http://127.0.0.1:3001/api/send-receipt', {
+          await fetch('/api/send-receipt', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -383,7 +383,7 @@ const AdminDashboard = () => {
     const email = window.prompt(`Enviar tracking a ${s.client_name}\nIngrese el correo:`, "");
     if (email && email.trim()) {
       try {
-        const response = await fetch('http://127.0.0.1:3001/api/send-email', {
+        const response = await fetch('/api/send-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -411,7 +411,7 @@ const AdminDashboard = () => {
     const email = window.prompt(`Enviar recibo de ingreso a ${r.client_name}\nIngrese el correo:`, r.email || "");
     if (email && email.trim()) {
       try {
-        const response = await fetch('http://127.0.0.1:3001/api/send-receipt', {
+        const response = await fetch('/api/send-receipt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

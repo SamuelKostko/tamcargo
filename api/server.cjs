@@ -141,7 +141,12 @@ app.post('/api/send-email', async (req, res) => {
     }
 });
 
-const PORT = 3001;
-app.listen(PORT, () => {
-    console.log(`API de TAM Cargo corriendo en el puerto ${PORT}`);
-});
+// Para despliegue en Vercel como Serverless Function
+module.exports = app;
+
+const PORT = process.env.PORT || 3001;
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`API de TAM Cargo corriendo en el puerto ${PORT}`);
+    });
+}
