@@ -367,6 +367,7 @@ const AdminDashboard = () => {
       transport_type: formData.get('transport_type'),
       location: newLocation,
       destination: formData.get('destination') || 'Venezuela',
+      eta: formData.get('eta') || '',
       last_update: serverTimestamp(),
       steps: updatedSteps
     };
@@ -696,6 +697,7 @@ const AdminDashboard = () => {
                   <th style={{ padding: '16px 24px', textAlign: 'left' }}>BL ID</th>
                   <th style={{ padding: '16px 24px', textAlign: 'left' }}>Estado General</th>
                   <th style={{ padding: '16px 24px', textAlign: 'left' }}>Ubicación</th>
+                  <th style={{ padding: '16px 24px', textAlign: 'center' }}>Llegada (ETA)</th>
                   <th style={{ padding: '16px 24px', textAlign: 'right' }}>Acciones</th>
                 </tr>
               </thead>
@@ -707,6 +709,7 @@ const AdminDashboard = () => {
                       <span style={{ padding: '4px 12px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800, background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0' }}>{b.status}</span>
                     </td>
                     <td style={{ padding: '20px 24px', fontSize: '0.85rem' }}>{b.location}</td>
+                    <td style={{ padding: '20px 24px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 700, color: C.electric }}>{b.eta || '—'}</td>
                     <td style={{ padding: '20px 24px', textAlign: 'right' }}>
                       <button onClick={() => { setCurrentBl(b); setShowBlModal(true); }} style={{ background: 'transparent', border: 'none', color: '#6366f1', cursor: 'pointer', marginRight: '16px' }}><Edit3 size={18} /></button>
                       <button onClick={() => handleDelete('containers', b.id)} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button>
@@ -849,6 +852,10 @@ const AdminDashboard = () => {
                 <div>
                   <label style={{ fontSize: '0.7rem', fontWeight: 800, color: C.textMuted, display: 'block', marginBottom: '8px' }}>DESTINO FINAL</label>
                   <input name="destination" defaultValue={currentBl?.destination || 'Venezuela'} placeholder="Ej: Caracas" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none' }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.7rem', fontWeight: 800, color: C.textMuted, display: 'block', marginBottom: '8px' }}>ETA (LLEGADA ESTIMADA)</label>
+                  <input name="eta" defaultValue={currentBl?.eta || ''} placeholder="Ej: 25 de Mayo" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none' }} />
                 </div>
               </div>
 

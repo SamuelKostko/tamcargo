@@ -159,9 +159,19 @@ const TrackingVisualizer = ({ initialId = "" }) => {
                 boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
-                  <div>
-                    <p style={{ fontSize: '0.65rem', color: C.textMuted, textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700' }}>ID de Tracking</p>
-                    <h3 style={{ fontSize: '1.5rem', color: C.text, margin: '2px 0', fontWeight: '800' }}>{data.id}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div>
+                      <p style={{ fontSize: '0.65rem', color: C.textMuted, textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700' }}>ID de Tracking</p>
+                      <h3 style={{ fontSize: '1.5rem', color: C.text, margin: '2px 0', fontWeight: '800' }}>{data.id}</h3>
+                    </div>
+                    {data.eta && (
+                      <div style={{ borderLeft: `1px solid ${C.border}`, paddingLeft: '20px' }}>
+                        <p style={{ fontSize: '0.65rem', color: C.electric, textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '800' }}>ETA / Llegada Estimada</p>
+                        <h3 style={{ fontSize: '1.1rem', color: C.text, margin: '2px 0', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Clock size={16} color={C.electric} /> {data.eta}
+                        </h3>
+                      </div>
+                    )}
                   </div>
                   <div style={{
                     padding: '6px 14px',
