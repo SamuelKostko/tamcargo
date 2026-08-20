@@ -2058,7 +2058,6 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
   const footerAddresses = [
     { title: "España", detail: "Calle Mario Roso De Luna 29. Nave 1 Posterior. San Blas Canillejas. 28022" },
     { title: "Estados Unidos", detail: "8000 NW 29th St, Doral, FL 33122/33198" },
-    { title: "Venezuela", detail: "Caracas" },
     { title: "China", detail: "Room 101, Building 1, Factory Area, No. 31 Fulin Road, Fuzhushan, Liaobu Town, Dongguan City, Guangdong Province" },
 
   ];
@@ -2158,8 +2157,8 @@ function Footer({ onOpenPrivacy, onOpenTerms }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
           <span style={{ color: C.gray, fontSize: "0.8rem" }}>© 2026 TAM Cargo Logistics. Todos los derechos reservados.</span>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div 
-              onClick={() => window.location.href='/login'} 
+            <div
+              onClick={() => window.location.href = '/login'}
               style={{ cursor: 'default', display: 'flex', alignItems: 'center' }}
             >
               <Wind size={12} color={C.electric} />
