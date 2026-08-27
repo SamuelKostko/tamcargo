@@ -74,6 +74,7 @@ const AdminDashboard = () => {
   const [pastedItems, setPastedItems] = useState([]);
   const [selectedReceiptIds, setSelectedReceiptIds] = useState([]);
   const [selectedClientFilter, setSelectedClientFilter] = useState('');
+  const [settings, setSettings] = useState({ ccEmails: '' });
 
   const normalize = (name) => name?.trim().toUpperCase() || 'SIN NOMBRE';
 
@@ -156,10 +157,19 @@ const AdminDashboard = () => {
       setReceipts(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
 
+    // Listen to Settings
+    const qSettings = doc(db, 'settings', 'general');
+    const unsubSettings = onSnapshot(qSettings, (docSnap) => {
+      if (docSnap.exists()) {
+        setSettings(docSnap.data());
+      }
+    });
+
     return () => {
       unsubShipments();
       unsubBls();
       unsubReceipts();
+      unsubSettings();
     };
   }, [navigate]);
 
@@ -321,7 +331,8 @@ const AdminDashboard = () => {
               pieces: data.pieces,
               weight: data.weight,
               volume: data.volume,
-              tracking: data.courier_tracking
+              tracking: data.courier_tracking,
+              cc: settings?.ccEmails || ''
             })
           });
         } catch (err) { console.error("Error al enviar email ingreso:", err); }
@@ -391,7 +402,8 @@ const AdminDashboard = () => {
             to: email,
             clientName: s.client_name,
             trackingId: s.id,
-            shippingMarks: s.shipping_marks
+            shippingMarks: s.shipping_marks,
+            cc: settings?.ccEmails || ''
           })
         });
 
@@ -423,7 +435,8 @@ const AdminDashboard = () => {
             pieces: r.pieces,
             weight: r.weight,
             volume: r.volume,
-            tracking: r.courier_tracking
+            tracking: r.courier_tracking,
+            cc: settings?.ccEmails || ''
           })
         });
 
@@ -443,6 +456,18 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem('isAuth');
     navigate('/login');
+  };
+
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const ccEmails = formData.get('ccEmails');
+    try {
+      await setDoc(doc(db, 'settings', 'general'), { ccEmails }, { merge: true });
+      alert("Configuración guardada correctamente");
+    } catch (err) {
+      alert("Error al guardar: " + err.message);
+    }
   };
 
   return (
@@ -479,6 +504,12 @@ const AdminDashboard = () => {
             active={activeTab === 'bls'}
             onClick={() => setActiveTab('bls')}
           />
+          <SidebarItem
+            icon={<Settings size={20} />}
+            label="Configuración"
+            active={activeTab === 'settings'}
+            onClick={() => setActiveTab('settings')}
+          />
         </nav>
 
         <button
@@ -502,35 +533,37 @@ const AdminDashboard = () => {
           <div>
             <div style={{ fontSize: '0.75rem', fontWeight: 800, color: C.electric, textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '8px' }}>Security & Logistics Control</div>
             <h1 style={{ fontSize: '2.25rem', fontWeight: 800, margin: 0, letterSpacing: '-1px' }}>
-              {activeTab === 'receipts' ? 'Ingresos Almacén' : activeTab === 'shipments' ? 'Guías de Despacho' : 'Consolidados Carga'}
+              {activeTab === 'receipts' ? 'Ingresos Almacén' : activeTab === 'shipments' ? 'Guías de Despacho' : activeTab === 'bls' ? 'Consolidados Carga' : 'Configuración'}
             </h1>
             <p style={{ color: C.textMuted, marginTop: '8px', fontSize: '1rem' }}>
               {activeTab === 'receipts'
                 ? 'Gestione la entrada de carga y el inventario diario.'
-                : activeTab === 'shipments' ? 'Rastreo dinámico de guías individuales.' : 'Estatus centralizado de contenedores internacionales.'}
+                : activeTab === 'shipments' ? 'Rastreo dinámico de guías individuales.' : activeTab === 'bls' ? 'Estatus centralizado de contenedores internacionales.' : 'Ajustes generales del sistema.'}
             </p>
           </div>
-          <button
-            onClick={() => {
-              if (activeTab === 'receipts') { setCurrentReceipt(null); setShowReceiptModal(true); }
-              else if (activeTab === 'shipments') {
-                setCurrentShipment(null);
-                setSelectedReceiptIds([]);
-                setSelectedClientFilter('');
-                setShowModal(Date.now());
-              }
-              else { setCurrentBl(null); setShowBlModal(true); }
-            }}
-            style={{
-              background: C.electricGrad, color: '#fff', border: 'none', borderRadius: '16px',
-              padding: '16px 32px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '12px',
-              cursor: 'pointer', boxShadow: '0 10px 20px rgba(177,30,34,0.3)', transition: 'transform 0.2s'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <Plus size={22} /> NUEVO {activeTab === 'receipts' ? 'INGRESO' : activeTab === 'shipments' ? 'TRACKING' : 'BL'}
-          </button>
+          {activeTab !== 'settings' && (
+            <button
+              onClick={() => {
+                if (activeTab === 'receipts') { setCurrentReceipt(null); setShowReceiptModal(true); }
+                else if (activeTab === 'shipments') {
+                  setCurrentShipment(null);
+                  setSelectedReceiptIds([]);
+                  setSelectedClientFilter('');
+                  setShowModal(Date.now());
+                }
+                else { setCurrentBl(null); setShowBlModal(true); }
+              }}
+              style={{
+                background: C.electricGrad, color: '#fff', border: 'none', borderRadius: '16px',
+                padding: '16px 32px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '12px',
+                cursor: 'pointer', boxShadow: '0 10px 20px rgba(177,30,34,0.3)', transition: 'transform 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <Plus size={22} /> NUEVO {activeTab === 'receipts' ? 'INGRESO' : activeTab === 'shipments' ? 'TRACKING' : 'BL'}
+            </button>
+          )}
         </header>
 
         {/* Quick Stats Overview */}
@@ -543,6 +576,34 @@ const AdminDashboard = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '100px', color: C.textMuted }}>
             <div style={{ marginBottom: '20px' }}>Sincronizando con base de datos...</div>
+          </div>
+        ) : activeTab === 'settings' ? (
+          <div style={{ background: '#fff', borderRadius: '24px', padding: '40px', boxShadow: C.cardShadow }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '24px' }}>Configuración de Correo</h3>
+            <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '600px' }}>
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: C.textMuted, marginBottom: '8px', display: 'block' }}>CORREOS EN COPIA (CC)</label>
+                <input
+                  name="ccEmails"
+                  type="text"
+                  defaultValue={settings?.ccEmails || ''}
+                  placeholder="ejemplo1@correo.com, ejemplo2@correo.com"
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none' }}
+                />
+                <p style={{ fontSize: '0.75rem', color: C.textMuted, marginTop: '8px' }}>
+                  Estos correos recibirán una copia oculta o directa de todas las notificaciones enviadas a los clientes (ingresos y guías). Separe los correos con comas.
+                </p>
+              </div>
+              <button
+                type="submit"
+                style={{
+                  background: C.electric, color: '#fff', border: 'none', borderRadius: '12px',
+                  padding: '16px', fontWeight: 700, cursor: 'pointer', marginTop: '10px'
+                }}
+              >
+                GUARDAR CONFIGURACIÓN
+              </button>
+            </form>
           </div>
         ) : activeTab === 'receipts' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

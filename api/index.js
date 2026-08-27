@@ -26,7 +26,7 @@ app.get('/api/health', (req, res) => {
 
 // Endpoint para enviar correos de ingreso de carga
 app.post('/api/send-receipt', async (req, res) => {
-    const { to, clientName, shippingMarks, description, pieces, weight, volume, tracking } = req.body;
+    const { to, clientName, shippingMarks, description, pieces, weight, volume, tracking, cc } = req.body;
 
     if (!to || !clientName) {
         return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -35,6 +35,7 @@ app.post('/api/send-receipt', async (req, res) => {
     const mailOptions = {
         from: process.env.SMTP_FROM,
         to: to,
+        cc: cc || '',
         subject: `Confirmación de Recepción Almacén - ${shippingMarks || clientName}`,
         html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 16px; color: #1f2937;">
@@ -42,8 +43,8 @@ app.post('/api/send-receipt', async (req, res) => {
                     <div style="display: inline-block; background: #B11E22; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 14px;">TAM CARGO LOGISTICS</div>
                 </div>
                 
-                <h2 style="color: #111827; margin-bottom: 8px; text-align: center;">📦 ¡Carga Recibida con Éxito!</h2>
-                <p style="text-align: center; color: #6b7280; margin-bottom: 32px;">Hola <strong>${clientName}</strong>, confirmamos que su mercancía ya se encuentra en nuestras manos.</p>
+                <h2 style="color: #111827; margin-bottom: 8px; text-align: center;">📦 ¡Carga Recibida en China!</h2>
+                <p style="text-align: center; color: #6b7280; margin-bottom: 32px;">Hola <strong>${clientName}</strong>, confirmamos que su mercancía ya llegó a nuestro almacén en China y se encuentra en nuestras manos.</p>
                 
                 <div style="background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
                     <table style="width: 100%; border-collapse: collapse;">
@@ -94,7 +95,7 @@ app.post('/api/send-receipt', async (req, res) => {
 
 // Endpoint para enviar correos de tracking
 app.post('/api/send-email', async (req, res) => {
-    const { to, clientName, trackingId, shippingMarks } = req.body;
+    const { to, clientName, trackingId, shippingMarks, cc } = req.body;
 
     if (!to || !trackingId) {
         return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -103,6 +104,7 @@ app.post('/api/send-email', async (req, res) => {
     const mailOptions = {
         from: process.env.SMTP_FROM,
         to: to,
+        cc: cc || '',
         subject: `Seguimiento TAM Cargo - Guía ${trackingId}`,
         html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
