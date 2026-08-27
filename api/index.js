@@ -80,6 +80,9 @@ app.post('/api/send-receipt', async (req, res) => {
                     Expertos en logística internacional.<br>
                     <em>Este es un correo automático, por favor no responda.</em>
                 </div>
+                <div style="display:none; white-space:nowrap; font-size:0px; line-height:0px; color:transparent; opacity:0; visibility:hidden;">
+                    ${Date.now()}-${Math.random()}
+                </div>
             </div>
         `,
     };
@@ -124,6 +127,9 @@ app.post('/api/send-email', async (req, res) => {
                     Gracias por confiar en <strong>TAM Cargo Logistics</strong>.<br>
                     Este es un correo automático, por favor no responda a este mensaje.
                 </p>
+                <div style="display:none; white-space:nowrap; font-size:0px; line-height:0px; color:transparent; opacity:0; visibility:hidden;">
+                    ${Date.now()}-${Math.random()}
+                </div>
             </div>
         `,
     };
