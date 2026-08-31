@@ -197,7 +197,7 @@ const AdminDashboard = () => {
     const marksArray = marksStr.split(',').map(m => m.trim().toUpperCase()).filter(m => m !== '');
 
     const data = {
-      client_name: formData.get('client_name'),
+      client_name: (formData.get('client_name') || '').trim().toUpperCase(),
       shipping_marks: marksStr,
       shipping_marks_array: marksArray,
       container_id: formData.get('bl_id') || null,
@@ -235,7 +235,7 @@ const AdminDashboard = () => {
       const c = r.split('\t');
 
       const currentMarks = (c[0] || '').trim();
-      const currentClient = (c[3] || '').trim();
+      const currentClient = (c[3] || '').trim().toUpperCase();
 
       const finalMarks = currentMarks || lastMarks;
       const finalClient = currentClient || lastClient;
@@ -299,7 +299,7 @@ const AdminDashboard = () => {
     const formData = new FormData(e.target);
     const id = currentReceipt ? currentReceipt.id : `REC-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
     const email = formData.get('email');
-    const clientName = formData.get('client_name');
+    const clientName = (formData.get('client_name') || '').trim().toUpperCase();
     const shippingMarks = formData.get('shipping_marks');
 
     const data = {

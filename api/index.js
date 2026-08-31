@@ -61,6 +61,10 @@ app.post('/api/send-receipt', async (req, res) => {
                             <td style="padding: 8px 0; color: #B11E22; font-weight: 600; text-align: right;">${tracking || 'No especificado'}</td>
                         </tr>
                         <tr>
+                            <td style="padding: 8px 0; color: #6b7280; font-size: 13px;">Piezas:</td>
+                            <td style="padding: 8px 0; color: #111827; text-align: right;">${pieces || 'N/A'}</td>
+                        </tr>
+                        <tr>
                             <td style="padding: 8px 0; color: #6b7280; font-size: 13px;">Peso:</td>
                             <td style="padding: 8px 0; color: #111827; text-align: right;">${weight ? weight + ' Kg' : 'N/A'}</td>
                         </tr>
