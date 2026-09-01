@@ -20,6 +20,7 @@ import {
   Ship,
   Mail,
   Box,
+  Boxes,
   AlertCircle,
   FileText,
   LayoutGrid,
@@ -111,7 +112,8 @@ const AdminDashboard = () => {
     return acc;
   }, {});
 
-  const groupedReceipts = receipts.filter(r => r.status !== 'shipped').reduce((acc, r) => {
+  const activeReceipts = receipts.filter(r => r.status !== 'shipped');
+  const groupedReceipts = activeReceipts.reduce((acc, r) => {
     const name = findFuzzyMatch(r.client_name, acc);
     if (!acc[name]) acc[name] = [];
     acc[name].push(r);
@@ -119,6 +121,9 @@ const AdminDashboard = () => {
   }, {});
 
   const pendingClients = Object.keys(groupedReceipts).sort();
+  const totalWeight = activeReceipts.reduce((sum, r) => sum + (parseFloat(r.weight?.toString().replace(',', '.')) || 0), 0).toFixed(2);
+  const totalVolume = activeReceipts.reduce((sum, r) => sum + (parseFloat(r.volume?.toString().replace(',', '.')) || 0), 0).toFixed(2);
+  const totalPieces = activeReceipts.reduce((sum, r) => sum + (parseInt(r.pieces) || 0), 0);
 
   // For expansion, we need to find which fuzzy group the name belongs to
   const toggleClient = (name) => {
@@ -568,8 +573,17 @@ const AdminDashboard = () => {
 
         {/* Quick Stats Overview */}
         {!loading && (
-          <div style={{ display: 'flex', gap: '24px', marginBottom: '40px' }}>
-            <StatCard label="Guías Activas" value={shipments.length} icon={<Package size={20} />} trend="En tránsito internacional" />
+          <div style={{ display: 'flex', gap: '24px', marginBottom: '40px', flexWrap: 'wrap' }}>
+            {activeTab === 'shipments' && (
+              <StatCard label="Guías Activas" value={shipments.length} icon={<Package size={20} />} trend="En tránsito internacional" />
+            )}
+            {activeTab === 'receipts' && (
+              <>
+                <StatCard label="Peso Total" value={`${totalWeight} Kg`} icon={<Box size={20} />} trend="En almacén" />
+                <StatCard label="Volumen Total" value={`${totalVolume} CBM/ft³`} icon={<Boxes size={20} />} trend="En almacén" />
+                <StatCard label="Piezas Totales" value={`${totalPieces} pcs`} icon={<Package size={20} />} trend="En almacén" />
+              </>
+            )}
           </div>
         )}
 
