@@ -397,7 +397,7 @@ const AdminDashboard = () => {
   };
 
   const handleSendEmail = async (s) => {
-    const email = window.prompt(`Enviar tracking a ${s.client_name}\nIngrese el correo:`, "");
+    const email = window.prompt(`Enviar tracking a ${s.client_name}\nIngrese los correos (separados por coma):`, "");
     if (email && email.trim()) {
       try {
         const response = await fetch('/api/send-email', {
@@ -426,7 +426,7 @@ const AdminDashboard = () => {
   };
 
   const handleSendReceiptEmail = async (r) => {
-    const email = window.prompt(`Enviar recibo de ingreso a ${r.client_name}\nIngrese el correo:`, r.email || "");
+    const email = window.prompt(`Enviar recibo de ingreso a ${r.client_name}\nIngrese los correos (separados por coma):`, r.email || "");
     if (email && email.trim()) {
       try {
         const response = await fetch('/api/send-receipt', {
@@ -969,7 +969,7 @@ const AdminDashboard = () => {
                 <>
                   <input name="client_name" defaultValue={currentReceipt?.client_name} placeholder="Nombre del Cliente" required style={{ padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none' }} />
                   <input name="shipping_marks" defaultValue={currentReceipt?.shipping_marks} placeholder="Shipping Mark (T-XXXX)" required style={{ padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none' }} />
-                  <input name="email" type="email" defaultValue={currentReceipt?.email} placeholder="Correo (Opcional)" style={{ padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none' }} />
+                  <input name="email" type="text" defaultValue={currentReceipt?.email} placeholder="Correos separados por coma (Opcional)" style={{ padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none' }} />
 
                   <textarea name="description" defaultValue={currentReceipt?.description} placeholder="Descripción de la carga" rows={2} style={{ padding: '14px', borderRadius: '12px', border: `1px solid ${C.border}`, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }} />
 

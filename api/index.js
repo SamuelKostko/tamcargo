@@ -28,13 +28,15 @@ app.get('/api/health', (req, res) => {
 app.post('/api/send-receipt', async (req, res) => {
     const { to, clientName, shippingMarks, description, pieces, weight, volume, tracking, cc } = req.body;
 
-    if (!to || !clientName) {
+    const cleanedTo = to ? to.split(',').map(e => e.trim()).filter(e => e).join(',') : '';
+
+    if (!cleanedTo || !clientName) {
         return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
     const mailOptions = {
         from: process.env.SMTP_FROM,
-        to: to,
+        to: cleanedTo,
         cc: cc || '',
         subject: `Confirmación de Recepción Almacén - ${shippingMarks || clientName}`,
         html: `
@@ -104,13 +106,15 @@ app.post('/api/send-receipt', async (req, res) => {
 app.post('/api/send-email', async (req, res) => {
     const { to, clientName, trackingId, shippingMarks, cc } = req.body;
 
-    if (!to || !trackingId) {
+    const cleanedTo = to ? to.split(',').map(e => e.trim()).filter(e => e).join(',') : '';
+
+    if (!cleanedTo || !trackingId) {
         return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
     const mailOptions = {
         from: process.env.SMTP_FROM,
-        to: to,
+        to: cleanedTo,
         cc: cc || '',
         subject: `Seguimiento TAM Cargo - Guía ${trackingId}`,
         html: `
